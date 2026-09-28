@@ -1,0 +1,1485 @@
+/* =====================================================
+   USER MASTER PAGE
+===================================================== */
+
+.user-master-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background: #f5f7fb;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.user-master-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.user-master-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-master-title-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e8eefc;
+  color: #3157b7;
+  flex-shrink: 0;
+}
+
+.user-master-title h1 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.user-master-title p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* =====================================================
+   ADD USER BUTTON
+===================================================== */
+
+.user-master-add-btn {
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 8px;
+  background: #3157b7;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  transition: 0.2s ease;
+}
+
+.user-master-add-btn:hover {
+  background: #25479b;
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   MAIN FORM LAYOUT
+===================================================== */
+
+.user-master-content {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* =====================================================
+   COMMON CARD
+===================================================== */
+
+.user-master-card {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e1e5ec;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   CARD HEADER
+===================================================== */
+
+.user-master-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 54px;
+  padding: 14px 20px;
+
+  border-bottom: 1px solid #e8ebf0;
+  box-sizing: border-box;
+}
+
+.user-master-card-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.user-master-card-title svg {
+  color: #3157b7;
+  flex-shrink: 0;
+}
+
+.user-master-card-title h2 {
+  margin: 0;
+  font-size: 17px;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+/* =====================================================
+   CLOSE BUTTON
+===================================================== */
+
+.user-master-close-btn {
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #f1f3f6;
+  color: #4b5563;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.user-master-close-btn:hover {
+  background: #feecec;
+  color: #dc2626;
+}
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.user-master-form {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.user-master-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.user-master-form-group {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.user-master-form-group label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  min-height: 18px;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.user-master-form-group label svg {
+  color: #3157b7;
+  flex-shrink: 0;
+}
+
+.required-star {
+  color: #dc2626;
+  margin-left: 2px;
+}
+
+/* =====================================================
+   INPUT / SELECT
+===================================================== */
+
+.user-master-form-group input,
+.user-master-form-group select {
+  width: 100%;
+  height: 39px;
+
+  padding: 0 11px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d5dae3;
+  border-radius: 7px;
+
+  background: #ffffff;
+  color: #1f2937;
+
+  outline: none;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  transition: 0.2s ease;
+}
+
+.user-master-form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.user-master-form-group input:focus,
+.user-master-form-group select:focus {
+  border-color: #3157b7;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(49, 87, 183, 0.08);
+}
+
+/* =====================================================
+   FORM ACTIONS
+===================================================== */
+
+.user-master-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 20px;
+  padding-top: 16px;
+
+  border-top: 1px solid #edf0f4;
+}
+
+/* COMMON ACTION BUTTON */
+
+.user-master-clear-btn,
+.user-master-save-btn {
+  min-height: 39px;
+
+  padding: 0 17px;
+
+  border-radius: 7px;
+  border: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+/* RESET / CANCEL */
+
+.user-master-clear-btn {
+  background: #eef1f5;
+  color: #374151;
+}
+
+.user-master-clear-btn:hover {
+  background: #e1e5eb;
+}
+
+/* SAVE / UPDATE */
+
+.user-master-save-btn {
+  background: #3157b7;
+  color: #ffffff;
+}
+
+.user-master-save-btn:hover {
+  background: #25479b;
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   PASSWORD NOTE
+===================================================== */
+
+.user-master-note {
+  background: #ffffff;
+
+  border: 1px solid #e1e5ec;
+  border-radius: 12px;
+
+  box-shadow:
+    0 3px 12px
+    rgba(15, 23, 42, 0.05);
+
+  overflow: hidden;
+}
+
+.user-master-note-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 15px 16px;
+
+  background: #f8fafc;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.user-master-note-header svg {
+  color: #3157b7;
+}
+
+.user-master-note-header h3 {
+  margin: 0;
+
+  font-size: 15px;
+  color: #1f2937;
+}
+
+.user-master-note-body {
+  padding: 16px;
+}
+
+.user-master-note-body p {
+  margin: 0 0 10px;
+
+  color: #6b7280;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.user-master-note-body ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.user-master-note-body li {
+  margin-bottom: 8px;
+
+  color: #4b5563;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =====================================================
+   ERROR MESSAGE
+===================================================== */
+
+.user-master-error {
+  margin: 0 20px 15px;
+
+  padding: 10px 13px;
+
+  border-radius: 7px;
+
+  background: #fff0f0;
+  color: #c62828;
+
+  border: 1px solid #f3cccc;
+
+  font-size: 13px;
+}
+
+/* =====================================================
+   SUCCESS MESSAGE
+===================================================== */
+
+.user-master-success {
+  margin: 0 20px 15px;
+
+  padding: 10px 13px;
+
+  border-radius: 7px;
+
+  background: #e9f8ef;
+  color: #16753a;
+
+  border: 1px solid #c8ecd5;
+
+  font-size: 13px;
+}
+
+/* =====================================================
+   USER LIST TOOLBAR
+===================================================== */
+
+.user-master-toolbar {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 12px 20px;
+
+  border-bottom: 1px solid #e8ebf0;
+}
+
+.user-master-toolbar strong {
+  color: #3157b7;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.user-master-search {
+  position: relative;
+  width: 360px;
+  max-width: 100%;
+}
+
+.user-master-search > svg {
+  position: absolute;
+
+  left: 13px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #6b7280;
+
+  pointer-events: none;
+}
+
+.user-master-search input {
+  width: 100%;
+
+  height: 40px;
+
+  padding: 0 42px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d7dce5;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  outline: none;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  transition: 0.2s ease;
+}
+
+.user-master-search input:focus {
+  border-color: #3157b7;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(49, 87, 183, 0.08);
+}
+
+.user-master-search-clear {
+  position: absolute;
+
+  right: 8px;
+  top: 50%;
+
+  width: 27px;
+  height: 27px;
+
+  transform: translateY(-50%);
+
+  border: none;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  color: #6b7280;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 5px;
+}
+
+.user-master-search-clear:hover {
+  background: #f1f3f6;
+  color: #374151;
+}
+
+/* =====================================================
+   USER TABLE WRAPPER
+===================================================== */
+
+.user-master-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scrollbar-width: thin;
+}
+
+.user-master-table {
+  width: 100%;
+
+  min-width: 900px;
+
+  border-collapse: collapse;
+}
+
+/* =====================================================
+   USER TABLE HEADER
+===================================================== */
+
+.user-master-table thead {
+  background: #f7f8fb;
+}
+
+.user-master-table th {
+  padding: 12px 14px;
+
+  text-align: left;
+
+  border-bottom: 1px solid #e1e5ec;
+
+  color: #374151;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/* =====================================================
+   USER TABLE DATA
+===================================================== */
+
+.user-master-table td {
+  padding: 12px 14px;
+
+  border-bottom: 1px solid #edf0f3;
+
+  color: #4b5563;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+}
+
+.user-master-table tbody tr {
+  transition: 0.15s ease;
+}
+
+.user-master-table tbody tr:hover {
+  background: #f9fafc;
+}
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.user-master-status {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 42px;
+
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.user-master-status.active {
+  background: #e8f7ee;
+  color: #16803c;
+}
+
+.user-master-status.inactive {
+  background: #feecec;
+  color: #c62828;
+}
+
+/* =====================================================
+   USER ACTIONS
+===================================================== */
+
+.user-master-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+/* EDIT */
+
+.user-master-edit-btn,
+.user-master-delete-btn {
+  width: 32px;
+  height: 32px;
+
+  border-radius: 6px;
+
+  border: none;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.user-master-edit-btn {
+  background: #eaf0ff;
+  color: #3157b7;
+}
+
+.user-master-edit-btn:hover {
+  background: #dce6ff;
+  transform: translateY(-1px);
+}
+
+/* DELETE */
+
+.user-master-delete-btn {
+  background: #feecec;
+  color: #dc2626;
+}
+
+.user-master-delete-btn:hover {
+  background: #fddada;
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.user-master-empty {
+  padding: 45px 20px;
+
+  text-align: center;
+
+  color: #6b7280;
+
+  font-size: 13px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.user-master-empty svg {
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+/* =====================================================
+   SECURITY SECTION
+   USER LIST KE NICHE
+===================================================== */
+
+.security-section {
+  width: 100%;
+
+  margin-top: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #cfd6e0;
+
+  border-radius: 7px;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   SECURITY TABS
+===================================================== */
+
+.security-tabs {
+  display: flex;
+
+  align-items: flex-end;
+
+  width: 100%;
+
+  background: #edf2f7;
+
+  border-bottom: 1px solid #aebbd0;
+
+  padding-left: 0;
+}
+
+.security-tab {
+  height: 36px;
+
+  padding: 0 20px;
+
+  border: none;
+
+  border-right: 1px solid #c6d0df;
+
+  background: #dce6f2;
+
+  color: #374151;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  white-space: nowrap;
+
+  transition: 0.2s ease;
+}
+
+.security-tab:hover {
+  background: #d2deec;
+}
+
+.security-tab.active {
+  background: #ffffff;
+
+  color: #003b7a;
+
+  border-top: 2px solid #3157b7;
+
+  margin-bottom: -1px;
+}
+
+/* =====================================================
+   SECURITY PANEL
+===================================================== */
+
+.security-panel {
+  width: 100%;
+
+  padding: 12px 18px 18px;
+
+  min-height: 145px;
+
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   SECURITY PANEL TITLE
+===================================================== */
+
+.security-panel-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-bottom: 8px;
+
+  color: #003b7a;
+
+  font-size: 14px;
+}
+
+.security-panel-title svg {
+  color: #3157b7;
+}
+
+/* =====================================================
+   ROLE TABLE BOX
+===================================================== */
+
+.role-table-box,
+.unit-table-box {
+  width: 100%;
+
+  border: 1px solid #d7dce5;
+
+  border-radius: 6px;
+
+  overflow-x: auto;
+
+  background: #ffffff;
+
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   SECURITY DATA TABLE
+===================================================== */
+
+.security-data-table {
+  width: 100%;
+
+  min-width: 700px;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+}
+
+.security-data-table th {
+  height: 32px;
+
+  padding: 5px 10px;
+
+  background: #eef2f6;
+
+  border-bottom: 1px solid #cbd3df;
+
+  color: #374151;
+
+  text-align: left;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.security-data-table td {
+  height: 42px;
+
+  padding: 5px 8px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #ffffff;
+
+  vertical-align: middle;
+}
+
+.security-data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.security-data-table tbody tr:hover td {
+  background: #fafbfd;
+}
+
+/* =====================================================
+   ROLE TABLE COLUMN WIDTH
+===================================================== */
+
+.role-table-box .security-data-table th:nth-child(1) {
+  width: 25%;
+}
+
+.role-table-box .security-data-table th:nth-child(2) {
+  width: 35%;
+}
+
+.role-table-box .security-data-table th:nth-child(3) {
+  width: 40%;
+}
+
+/* =====================================================
+   UNIT TABLE COLUMN WIDTH
+===================================================== */
+
+.unit-table-box .security-data-table th:nth-child(1) {
+  width: 35%;
+}
+
+.unit-table-box .security-data-table th:nth-child(2) {
+  width: 65%;
+}
+
+/* =====================================================
+   SECURITY INPUT / SELECT
+===================================================== */
+
+.security-data-table input,
+.security-data-table select {
+  width: 100%;
+
+  height: 31px;
+
+  box-sizing: border-box;
+
+  padding: 0 8px;
+
+  border: 1px solid #cbd3df;
+
+  border-radius: 4px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #374151;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  transition: 0.2s ease;
+}
+
+.security-data-table input:focus,
+.security-data-table select:focus {
+  border-color: #3157b7;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(49, 87, 183, 0.08);
+}
+
+/* =====================================================
+   ROLE ACTION BUTTONS
+===================================================== */
+
+.role-action-buttons {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  flex-wrap: wrap;
+}
+
+/* =====================================================
+   UPDATE ROLE BUTTON
+===================================================== */
+
+.update-role-btn {
+  height: 31px;
+
+  padding: 0 12px;
+
+  border: 1px solid #b8c1ce;
+
+  border-radius: 4px;
+
+  background: #e6e9ed;
+
+  color: #1f2937;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition: 0.2s ease;
+}
+
+.update-role-btn:hover {
+  background: #d7dce3;
+  color: #3157b7;
+}
+
+/* =====================================================
+   REMOVE ROLE BUTTON
+===================================================== */
+
+.remove-role-btn {
+  height: 31px;
+
+  padding: 0 12px;
+
+  border: 1px solid #b8c1ce;
+
+  border-radius: 4px;
+
+  background: #eeeeee;
+
+  color: #374151;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition: 0.2s ease;
+}
+
+.remove-role-btn:hover {
+  background: #feecec;
+
+  color: #c62828;
+
+  border-color: #efb4b4;
+}
+
+/* =====================================================
+   ADD ROLE / ADD UNIT BUTTON
+===================================================== */
+
+.add-role-row-btn {
+  margin: 10px;
+
+  height: 31px;
+
+  padding: 0 13px;
+
+  border: 1px solid #b8c1ce;
+
+  border-radius: 4px;
+
+  background: #edf2f7;
+
+  color: #1f2937;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  transition: 0.2s ease;
+}
+
+.add-role-row-btn:hover {
+  background: #dce6f5;
+
+  color: #3157b7;
+}
+
+/* =====================================================
+   OLD / ALTERNATE SECURITY CLASS SUPPORT
+===================================================== */
+
+.user-security-section {
+  width: 100%;
+
+  margin-top: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #cfd6e0;
+
+  border-radius: 7px;
+
+  overflow: hidden;
+}
+
+.user-security-tabs {
+  display: flex;
+
+  align-items: flex-end;
+
+  background: #edf2f7;
+
+  border-bottom: 1px solid #aebbd0;
+}
+
+.security-table-box {
+  width: 100%;
+
+  border: 1px solid #d7dce5;
+
+  border-radius: 6px;
+
+  overflow-x: auto;
+
+  background: #ffffff;
+}
+
+.security-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+}
+
+.security-table th {
+  height: 32px;
+
+  padding: 5px 10px;
+
+  background: #eef2f6;
+
+  border-bottom: 1px solid #cbd3df;
+
+  color: #374151;
+
+  text-align: left;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.security-table td {
+  height: 38px;
+
+  padding: 4px 8px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #ffffff;
+}
+
+.security-table input,
+.security-table select {
+  width: 100%;
+
+  height: 29px;
+
+  box-sizing: border-box;
+
+  padding: 0 8px;
+
+  border: 1px solid #cbd3df;
+
+  border-radius: 3px;
+
+  outline: none;
+
+  font-size: 12px;
+}
+
+/* =====================================================
+   OLD BUTTON CLASS SUPPORT
+===================================================== */
+
+.security-action-group {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.security-update-btn {
+  height: 29px;
+
+  padding: 0 12px;
+
+  border: 1px solid #b8c1ce;
+
+  border-radius: 3px;
+
+  background: #e6e9ed;
+
+  color: #1f2937;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.security-update-btn:hover {
+  background: #d7dce3;
+}
+
+.security-remove-btn {
+  height: 29px;
+
+  padding: 0 12px;
+
+  border: 1px solid #b8c1ce;
+
+  border-radius: 3px;
+
+  background: #eeeeee;
+
+  color: #374151;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.security-remove-btn:hover {
+  background: #feecec;
+
+  color: #c62828;
+}
+
+.security-add-btn {
+  height: 29px;
+
+  padding: 0 12px;
+
+  border: 1px solid #b8c1ce;
+
+  border-radius: 3px;
+
+  background: #eef1f5;
+
+  color: #1f2937;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 4px;
+}
+
+.security-add-btn:hover {
+  background: #dce6f5;
+
+  color: #3157b7;
+}
+
+.security-bottom-add-btn {
+  margin-top: 10px;
+
+  height: 31px;
+
+  padding: 0 13px;
+
+  border: 1px solid #b8c1ce;
+
+  border-radius: 4px;
+
+  background: #edf2f7;
+
+  color: #1f2937;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+.security-bottom-add-btn:hover {
+  background: #dce6f5;
+}
+
+/* =====================================================
+   RESPONSIVE - TABLET
+===================================================== */
+
+@media (max-width: 1100px) {
+
+  .user-master-content {
+    grid-template-columns: 1fr;
+  }
+
+  .user-master-note {
+    order: 2;
+  }
+
+  .user-master-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+/* =====================================================
+   RESPONSIVE - SMALL TABLET
+===================================================== */
+
+@media (max-width: 850px) {
+
+  .user-master-page {
+    padding: 15px;
+  }
+
+  .user-master-toolbar {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .user-master-search {
+    width: 100%;
+  }
+
+  .user-master-toolbar strong {
+    align-self: flex-start;
+  }
+
+  .security-panel {
+    padding: 12px;
+  }
+
+}
+
+/* =====================================================
+   RESPONSIVE - MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .user-master-page {
+    padding: 12px;
+  }
+
+  .user-master-header {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 12px;
+  }
+
+  .user-master-title {
+    width: 100%;
+  }
+
+  .user-master-add-btn {
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .user-master-content {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+  .user-master-note {
+    width: 100%;
+  }
+
+  .user-master-form {
+    padding: 15px;
+  }
+
+  .user-master-form-grid {
+    grid-template-columns: 1fr;
+
+    gap: 14px;
+  }
+
+  .user-master-form-actions {
+    flex-wrap: wrap;
+
+    justify-content: flex-end;
+  }
+
+  .user-master-toolbar {
+    padding: 12px 15px;
+  }
+
+  .user-master-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .security-tabs {
+    overflow-x: auto;
+  }
+
+  .security-tab {
+    flex-shrink: 0;
+
+    padding: 0 15px;
+  }
+
+  .security-panel {
+    padding: 10px;
+  }
+
+  .role-action-buttons {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .update-role-btn,
+  .remove-role-btn {
+    width: 100%;
+  }
+
+}
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 450px) {
+
+  .user-master-title h1 {
+    font-size: 21px;
+  }
+
+  .user-master-card-header {
+    padding: 12px 14px;
+  }
+
+  .user-master-form-actions {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .user-master-clear-btn,
+  .user-master-save-btn {
+    width: 100%;
+  }
+
+  .security-tab {
+    font-size: 12px;
+
+    padding: 0 12px;
+  }
+
+}
