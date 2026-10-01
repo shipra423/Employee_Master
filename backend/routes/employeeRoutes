@@ -1,0 +1,524 @@
+const express = require("express");
+const router = express.Router();
+
+const Employee = require("../models/Employee");
+
+
+// =====================================================
+// GET ALL EMPLOYEES
+// =====================================================
+
+router.get("/", async (req, res) => {
+  try {
+    const employees = await Employee.find().sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json(employees);
+  } catch (error) {
+    console.error("GET Employees Error:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch employees",
+      error: error.message,
+    });
+  }
+});
+
+// =====================================================
+// GET EMPLOYEE BY EMPLOYEE CODE
+// IMPORTANT: THIS MUST COME BEFORE /:id
+// =====================================================
+
+router.get("/employee-code/:employeeCode", async (req, res) => {
+  try {
+    const employeeCode =
+      req.params.employeeCode.trim();
+
+    const employee = await Employee.findOne({
+      employeeCode: employeeCode,
+    });
+
+    if (!employee) {
+      return res.status(404).json({
+        message: "Employee Code not found",
+      });
+    }
+
+    res.status(200).json(employee);
+  } catch (error) {
+    console.error(
+      "GET Employee By Code Error:",
+      error
+    );
+
+    res.status(500).json({
+      message: "Failed to fetch employee",
+      error: error.message,
+    });
+  }
+});
+
+// =====================================================
+// GET SINGLE EMPLOYEE BY MONGODB ID
+// =====================================================
+
+router.get("/:id", async (req, res) => {
+  try {
+    const employee =
+      await Employee.findById(req.params.id);
+
+    if (!employee) {
+      return res.status(404).json({
+        message: "Employee not found",
+      });
+    }
+
+    res.status(200).json(employee);
+  } catch (error) {
+    console.error(
+      "GET Single Employee Error:",
+      error
+    );
+
+    res.status(500).json({
+      message: "Failed to fetch employee",
+      error: error.message,
+    });
+  }
+});
+
+// =====================================================
+// ADD EMPLOYEE
+// =====================================================
+
+router.post("/", async (req, res) => {
+  try {
+    const {
+      unitCode,
+      employeeCode,
+      employeeName,
+      fatherName,
+      dob,
+      aadhar,
+      contactNo,
+      mailId,
+      departmentCode,
+      contractorCode,
+      assignedShift,
+      designation,
+      category,
+      reportingPerson,
+      joiningDate,
+      resignDate,
+      creationDate,
+    } = req.body;
+
+    // =================================================
+    // REQUIRED FIELDS
+    // =================================================
+
+    if (
+      !employeeCode ||
+      !employeeCode.trim()
+    ) {
+      return res.status(400).json({
+        message: "Employee ID is required",
+      });
+    }
+
+    if (
+      !employeeName ||
+      !employeeName.trim()
+    ) {
+      return res.status(400).json({
+        message: "Employee Name is required",
+      });
+    }
+
+    if (
+      !departmentCode ||
+      !departmentCode.trim()
+    ) {
+      return res.status(400).json({
+        message: "Department is required",
+      });
+    }
+
+    // =================================================
+    // CLEAN EMPLOYEE CODE
+    // =================================================
+
+    const cleanEmployeeCode =
+      employeeCode.trim();
+
+    // =================================================
+    // DUPLICATE CHECK
+    // =================================================
+
+    const existingEmployee =
+      await Employee.findOne({
+        employeeCode: cleanEmployeeCode,
+      });
+
+    if (existingEmployee) {
+      return res.status(400).json({
+        message: "Employee ID already exists",
+      });
+    }
+
+    // =================================================
+    // CREATE EMPLOYEE
+    // =================================================
+
+    const employee = new Employee({
+      unitCode: unitCode
+        ? unitCode.trim()
+        : "",
+
+      employeeCode:
+        cleanEmployeeCode,
+
+      employeeName:
+        employeeName.trim(),
+
+      fatherName: fatherName
+        ? fatherName.trim()
+        : "",
+
+      dob: dob || null,
+
+      aadhar: aadhar
+        ? aadhar.trim()
+        : "",
+
+      contactNo: contactNo
+        ? contactNo.trim()
+        : "",
+
+      mailId: mailId
+        ? mailId.trim()
+        : "",
+
+      departmentCode:
+        departmentCode.trim(),
+
+      contractorCode:
+        contractorCode
+          ? contractorCode.trim()
+          : "",
+
+      assignedShift:
+        assignedShift
+          ? assignedShift.trim()
+          : "",
+
+      designation:
+        designation
+          ? designation.trim()
+          : "",
+
+      category: category
+        ? category.trim()
+        : "",
+
+      reportingPerson:
+        reportingPerson
+          ? reportingPerson.trim()
+          : "",
+
+      joiningDate:
+        joiningDate || null,
+
+      resignDate:
+        resignDate || null,
+
+      creationDate:
+        creationDate || new Date(),
+    });
+
+    const savedEmployee =
+      await employee.save();
+
+    res.status(201).json({
+      message:
+        "Employee saved successfully",
+
+      employee: savedEmployee,
+    });
+  } catch (error) {
+    console.error(
+      "POST Employee Error:",
+      error
+    );
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message:
+          "Employee ID already exists",
+      });
+    }
+
+    res.status(500).json({
+      message:
+        "Failed to save employee",
+      error: error.message,
+    });
+  }
+});
+
+// =====================================================
+// UPDATE EMPLOYEE
+// =====================================================
+
+router.put("/:id", async (req, res) => {
+  try {
+    const {
+      unitCode,
+      employeeCode,
+      employeeName,
+      fatherName,
+      dob,
+      aadhar,
+      contactNo,
+      mailId,
+      departmentCode,
+      contractorCode,
+      assignedShift,
+      designation,
+      category,
+      reportingPerson,
+      joiningDate,
+      resignDate,
+      creationDate,
+    } = req.body;
+
+    // =================================================
+    // REQUIRED
+    // =================================================
+
+    if (
+      !employeeCode ||
+      !employeeCode.trim()
+    ) {
+      return res.status(400).json({
+        message: "Employee ID is required",
+      });
+    }
+
+    if (
+      !employeeName ||
+      !employeeName.trim()
+    ) {
+      return res.status(400).json({
+        message: "Employee Name is required",
+      });
+    }
+
+    if (
+      !departmentCode ||
+      !departmentCode.trim()
+    ) {
+      return res.status(400).json({
+        message: "Department is required",
+      });
+    }
+
+    // =================================================
+    // FIND EMPLOYEE
+    // =================================================
+
+    const employee =
+      await Employee.findById(
+        req.params.id
+      );
+
+    if (!employee) {
+      return res.status(404).json({
+        message: "Employee not found",
+      });
+    }
+
+    // =================================================
+    // CLEAN EMPLOYEE CODE
+    // =================================================
+
+    const cleanEmployeeCode =
+      employeeCode.trim();
+
+    // =================================================
+    // DUPLICATE CHECK
+    // =================================================
+
+    const duplicateEmployee =
+      await Employee.findOne({
+        employeeCode:
+          cleanEmployeeCode,
+
+        _id: {
+          $ne: req.params.id,
+        },
+      });
+
+    if (duplicateEmployee) {
+      return res.status(400).json({
+        message:
+          "Employee ID already exists",
+      });
+    }
+
+    // =================================================
+    // UPDATE
+    // =================================================
+
+    employee.unitCode =
+      unitCode
+        ? unitCode.trim()
+        : "";
+
+    employee.employeeCode =
+      cleanEmployeeCode;
+
+    employee.employeeName =
+      employeeName.trim();
+
+    employee.fatherName =
+      fatherName
+        ? fatherName.trim()
+        : "";
+
+    employee.dob =
+      dob || null;
+
+    employee.aadhar =
+      aadhar
+        ? aadhar.trim()
+        : "";
+
+    employee.contactNo =
+      contactNo
+        ? contactNo.trim()
+        : "";
+
+    employee.mailId =
+      mailId
+        ? mailId.trim()
+        : "";
+
+    employee.departmentCode =
+      departmentCode.trim();
+
+    employee.contractorCode =
+      contractorCode
+        ? contractorCode.trim()
+        : "";
+
+    employee.assignedShift =
+      assignedShift
+        ? assignedShift.trim()
+        : "";
+
+    employee.designation =
+      designation
+        ? designation.trim()
+        : "";
+
+    employee.category =
+      category
+        ? category.trim()
+        : "";
+
+    employee.reportingPerson =
+      reportingPerson
+        ? reportingPerson.trim()
+        : "";
+
+    employee.joiningDate =
+      joiningDate || null;
+
+    employee.resignDate =
+      resignDate || null;
+
+    employee.creationDate =
+      creationDate ||
+      employee.creationDate;
+
+    // =================================================
+    // SAVE
+    // =================================================
+
+    const updatedEmployee =
+      await employee.save();
+
+    res.status(200).json({
+      message:
+        "Employee updated successfully",
+
+      employee:
+        updatedEmployee,
+    });
+  } catch (error) {
+    console.error(
+      "PUT Employee Error:",
+      error
+    );
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message:
+          "Employee ID already exists",
+      });
+    }
+
+    res.status(500).json({
+      message:
+        "Failed to update employee",
+
+      error:
+        error.message,
+    });
+  }
+});
+
+// =====================================================
+// DELETE EMPLOYEE
+// =====================================================
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const employee =
+      await Employee.findByIdAndDelete(
+        req.params.id
+      );
+
+    if (!employee) {
+      return res.status(404).json({
+        message: "Employee not found",
+      });
+    }
+
+    res.status(200).json({
+      message:
+        "Employee deleted successfully",
+    });
+  } catch (error) {
+    console.error(
+      "DELETE Employee Error:",
+      error
+    );
+
+    res.status(500).json({
+      message:
+        "Failed to delete employee",
+
+      error:
+        error.message,
+    });
+  }
+});
+
+// =====================================================
+// EXPORT
+// =====================================================
+
+module.exports = router;

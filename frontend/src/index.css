@@ -126,3 +126,548 @@ code {
   object-fit: contain;
   display: block;
 }
+/* =========================================================
+   QUALIFICATION FORM - REFERENCE DESIGN
+   ========================================================= */
+
+.qualification-page {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.qualification-page .employee-toolbar {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.qualification-page .employee-search-box {
+  width: 420px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+
+  background: #ffffff;
+
+  border-radius: 7px;
+
+  padding: 0 10px;
+
+  box-sizing: border-box;
+}
+
+.qualification-page .employee-search-box input {
+  width: 100%;
+  height: 100%;
+
+  border: none;
+  outline: none;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   EMPLOYEE ID
+   ========================================================= */
+
+.qualification-employee {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 3px;
+
+  margin: 12px 0 4px;
+}
+
+.qualification-employee label {
+  display: flex;
+  align-items: center;
+
+  gap: 2px;
+
+  color: #000000;
+
+  font-size: 16px;
+
+  font-weight: 700;
+}
+
+.qualification-employee input {
+  width: 180px;
+  height: 21px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #777;
+
+  padding: 1px 4px;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.qualification-form {
+  width: 100%;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TABLE OUTER BOX
+   ========================================================= */
+
+.qualification-table-wrapper {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  overflow-x: auto;
+
+  border: 1px solid #c40000;
+
+  border-radius: 12px;
+
+  background: #edf0f4;
+
+  padding: 0;
+
+  margin-top: 4px;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.qualification-table {
+  width: 100%;
+
+  min-width: 780px;
+
+  border-collapse: separate;
+
+  border-spacing: 0;
+
+  table-layout: fixed;
+
+  background: #edf0f4;
+
+  color: #000000;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   COLUMN WIDTHS
+   ========================================================= */
+
+.qualification-table .col-code {
+  width: 15%;
+}
+
+.qualification-table .col-qualification {
+  width: 15%;
+}
+
+.qualification-table .col-institution {
+  width: 15%;
+}
+
+.qualification-table .col-year {
+  width: 7.5%;
+}
+
+.qualification-table .col-university {
+  width: 15%;
+}
+
+.qualification-table .col-division {
+  width: 15%;
+}
+
+.qualification-table .col-marks {
+  width: 10%;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.qualification-table thead th {
+  height: 32px;
+
+  box-sizing: border-box;
+
+  padding: 3px 5px;
+
+  background: #edf0f4;
+
+  color: #000000;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  text-align: left;
+
+  vertical-align: middle;
+
+  border-right: 1px solid #c40000;
+
+  border-bottom: 1px solid #c40000;
+}
+
+
+/* YEAR HEADING CENTER */
+.qualification-table thead th[colspan="2"] {
+  text-align: center;
+
+  font-size: 13px;
+}
+
+
+/* YEAR FROM / TO */
+.qualification-table thead tr:nth-child(2) th {
+  height: 27px;
+
+  text-align: center;
+
+  font-size: 12px;
+}
+
+
+/* REMOVE LAST VERTICAL BORDER */
+.qualification-table thead th:last-child {
+  border-right: none;
+}
+
+
+/* =========================================================
+   HEADER TEXT
+   ========================================================= */
+
+.qualification-table thead th span {
+  color: #ff0000;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   BODY ROW
+   ========================================================= */
+
+.qualification-table tbody tr {
+  height: 21px;
+}
+
+
+/* =========================================================
+   BODY CELLS
+   ========================================================= */
+
+.qualification-table tbody td {
+  height: 21px;
+
+  padding: 2px 5px;
+
+  box-sizing: border-box;
+
+  background: #edf0f4;
+
+  border-right: 1px solid #e1e5ea;
+
+  border-bottom: 1px solid #ffffff;
+
+  vertical-align: middle;
+}
+
+
+/* =========================================================
+   NORMAL INPUTS
+   ========================================================= */
+
+.qualification-table tbody td > input {
+  width: 100%;
+
+  height: 20px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #777;
+
+  border-radius: 0;
+
+  padding: 1px 4px;
+
+  outline: none;
+
+  color: #000000;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   INPUT + ICON
+   ========================================================= */
+
+.qualification-input-with-icon {
+  width: 100%;
+
+  height: 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 2px;
+
+  box-sizing: border-box;
+}
+
+
+.qualification-input-with-icon input {
+  flex: 1;
+
+  min-width: 0;
+
+  height: 20px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #777;
+
+  border-radius: 0;
+
+  padding: 1px 4px;
+
+  outline: none;
+
+  color: #000000;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   SMALL ICON BUTTON
+   ========================================================= */
+
+.small-icon-button {
+  width: 20px;
+
+  height: 20px;
+
+  min-width: 20px;
+
+  padding: 0;
+
+  margin: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: #e9edf1;
+
+  border: 1px solid #9aa0a6;
+
+  border-radius: 0;
+
+  color: #222;
+
+  cursor: default;
+}
+
+
+.small-icon-button svg {
+  width: 14px;
+
+  height: 14px;
+}
+
+
+/* =========================================================
+   DIVISION
+   ========================================================= */
+
+.qualification-table tbody td select {
+  width: 100%;
+
+  height: 20px;
+
+  box-sizing: border-box;
+
+  background: #e8edf2;
+
+  border: 1px solid #999;
+
+  border-radius: 2px;
+
+  padding: 0 3px;
+
+  color: #000000;
+
+  font-size: 11px;
+
+  outline: none;
+}
+
+
+/* =========================================================
+   FROM / TO
+   ========================================================= */
+
+.qualification-table tbody td:nth-child(4) input,
+.qualification-table tbody td:nth-child(5) input {
+  text-align: center;
+}
+
+
+/* =========================================================
+   MARKS
+   ========================================================= */
+
+.qualification-table tbody td:nth-child(8) input {
+  text-align: center;
+}
+
+
+/* =========================================================
+   LAST ROW
+   ========================================================= */
+
+.qualification-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================================
+   LAST COLUMN
+   ========================================================= */
+
+.qualification-table tbody td:last-child {
+  border-right: none;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.qualification-form .form-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 8px;
+
+  padding-right: 5px;
+}
+
+
+/* =========================================================
+   CLEAR
+   ========================================================= */
+
+.qualification-form .clear-btn {
+  height: 32px;
+
+  padding: 0 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  background: #ffffff;
+
+  color: #222;
+
+  border: 1px solid #bbb;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   SAVE
+   ========================================================= */
+
+.qualification-form .next-btn {
+  height: 32px;
+
+  padding: 0 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  background: #1268e8;
+
+  color: #ffffff;
+
+  border: none;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+
+.qualification-form .next-btn:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+
+.qualification-form .success-message,
+.qualification-form .error-message {
+  margin-top: 6px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}

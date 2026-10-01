@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -23,7 +22,7 @@ function PFESI() {
   // =====================================================
 
   const API_URL =
-    "http://localhost:5000/api/employees";
+    "http://localhost:5000/api/salary";
 
   // =====================================================
   // EMPTY FORM
@@ -40,6 +39,10 @@ function PFESI() {
     esiApplicable: false,
     effectiveDate: "",
   };
+
+  // =====================================================
+  // STATES
+  // =====================================================
 
   const [formData, setFormData] =
     useState(emptyForm);
@@ -86,7 +89,7 @@ function PFESI() {
   ];
 
   // =====================================================
-  // GET ALL RECORDS
+  // GET ALL SALARY RECORDS
   // =====================================================
 
   const fetchRecords = async () => {
@@ -97,20 +100,22 @@ function PFESI() {
       const response =
         await axios.get(API_URL);
 
-      setRecords(
+      if (
         Array.isArray(response.data)
-          ? response.data
-          : []
-      );
+      ) {
+        setRecords(response.data);
+      } else {
+        setRecords([]);
+      }
     } catch (err) {
       console.error(
-        "Fetch records error:",
+        "FETCH SALARY ERROR:",
         err
       );
 
       setError(
         err.response?.data?.message ||
-          "Unable to load employee records."
+          "Unable to load salary records."
       );
     } finally {
       setLoading(false);
@@ -139,6 +144,7 @@ function PFESI() {
 
     setFormData((previous) => ({
       ...previous,
+
       [name]:
         type === "checkbox"
           ? checked
@@ -159,9 +165,9 @@ function PFESI() {
     setMessage("");
     setError("");
 
-    // -------------------------------
+    // ================================================
     // VALIDATION
-    // -------------------------------
+    // ================================================
 
     if (
       !formData.employeeCode.trim()
@@ -191,9 +197,9 @@ function PFESI() {
     try {
       setSaving(true);
 
-      // =================================================
-      // FORM 3 DATA
-      // =================================================
+      // ==============================================
+      // DATA
+      // ==============================================
 
       const saveData = {
         employeeCode:
@@ -214,82 +220,63 @@ function PFESI() {
           formData.pfNumber.trim(),
 
         pfApplicable:
-          formData.pfApplicable,
+          Boolean(
+            formData.pfApplicable
+          ),
 
         esiNumber:
           formData.esiNumber.trim(),
 
         esiApplicable:
-          formData.esiApplicable,
+          Boolean(
+            formData.esiApplicable
+          ),
 
         effectiveDate:
-          formData.effectiveDate || null,
+          formData.effectiveDate
+            ? formData.effectiveDate
+            : null,
       };
 
       console.log(
-        "Saving Form 3:",
+        "SENDING SALARY DATA:",
         saveData
       );
 
-      // =================================================
-      // EDIT MODE
-      // =================================================
+      // ==============================================
+      // EDIT
+      // ==============================================
 
       if (editMode && editId) {
         const response =
           await axios.put(
             `${API_URL}/${editId}`,
-            {
-              employeeCode:
-                saveData.employeeCode,
-
-              employeeName:
-                saveData.employeeName,
-
-              departmentCode:
-                saveData.department,
-
-              basicSalary:
-                saveData.basicSalary,
-
-              pfNumber:
-                saveData.pfNumber,
-
-              pfApplicable:
-                saveData.pfApplicable,
-
-              esiNumber:
-                saveData.esiNumber,
-
-              esiApplicable:
-                saveData.esiApplicable,
-
-              effectiveDate:
-                saveData.effectiveDate,
-            }
-          );
-
-        console.log(
-          "Updated:",
-          response.data
-        );
-
-        setMessage(
-          "Employee details updated successfully."
-        );
-      } else {
-        // =================================================
-        // NORMAL SAVE
-        // =================================================
-
-        const response =
-          await axios.post(
-            `${API_URL}/form3`,
             saveData
           );
 
         console.log(
-          "Saved:",
+          "SALARY UPDATED:",
+          response.data
+        );
+
+        setMessage(
+          "Salary details updated successfully."
+        );
+      }
+
+      // ==============================================
+      // NEW SAVE
+      // ==============================================
+
+      else {
+        const response =
+          await axios.post(
+            API_URL,
+            saveData
+          );
+
+        console.log(
+          "SALARY SAVED:",
           response.data
         );
 
@@ -298,23 +285,25 @@ function PFESI() {
         );
       }
 
-      // =================================================
-      // REFRESH TABLE
-      // =================================================
+      // ==============================================
+      // REFRESH RECORDS
+      // ==============================================
 
       await fetchRecords();
 
-      // =================================================
-      // RESET FORM
-      // =================================================
+      // ==============================================
+      // RESET
+      // ==============================================
 
-      setFormData(emptyForm);
+      setFormData({
+        ...emptyForm,
+      });
 
       setEditMode(false);
       setEditId(null);
     } catch (err) {
       console.error(
-        "SAVE ERROR:",
+        "SALARY SAVE ERROR:",
         err
       );
 
@@ -338,7 +327,9 @@ function PFESI() {
   // =====================================================
 
   const handleReset = () => {
-    setFormData(emptyForm);
+    setFormData({
+      ...emptyForm,
+    });
 
     setEditMode(false);
     setEditId(null);
@@ -364,7 +355,7 @@ function PFESI() {
         record.employeeName || "",
 
       department:
-        record.departmentCode || "",
+        record.department || "",
 
       basicSalary:
         record.basicSalary ?? "",
@@ -405,7 +396,10 @@ function PFESI() {
   const handleCancelEdit = () => {
     setEditMode(false);
     setEditId(null);
-    setFormData(emptyForm);
+
+    setFormData({
+      ...emptyForm,
+    });
 
     setMessage("");
     setError("");
@@ -418,7 +412,7 @@ function PFESI() {
   const handleDelete = async (id) => {
     const confirmDelete =
       window.confirm(
-        "Are you sure you want to delete this employee?"
+        "Are you sure you want to delete this salary record?"
       );
 
     if (!confirmDelete) {
@@ -434,25 +428,25 @@ function PFESI() {
       );
 
       setMessage(
-        "Employee deleted successfully."
+        "Salary record deleted successfully."
       );
 
       await fetchRecords();
     } catch (err) {
       console.error(
-        "Delete error:",
+        "DELETE SALARY ERROR:",
         err
       );
 
       setError(
         err.response?.data?.message ||
-          "Failed to delete employee."
+          "Failed to delete salary record."
       );
     }
   };
 
   // =====================================================
-  // SEARCH TABLE
+  // SEARCH
   // =====================================================
 
   const filteredRecords =
@@ -480,7 +474,7 @@ function PFESI() {
           .includes(searchText) ||
 
         String(
-          record.departmentCode || ""
+          record.department || ""
         )
           .toLowerCase()
           .includes(searchText)
@@ -530,7 +524,9 @@ function PFESI() {
   return (
     <div className="employee-page">
 
-      {/* HEADER */}
+      {/* ==========================================
+          HEADER
+      ========================================== */}
 
       <div className="page-header">
 
@@ -546,7 +542,9 @@ function PFESI() {
 
       </div>
 
-      {/* STEP INDICATOR */}
+      {/* ==========================================
+          STEP INDICATOR
+      ========================================== */}
 
       <div className="step-card">
 
@@ -598,7 +596,9 @@ function PFESI() {
 
       </div>
 
-      {/* FORM */}
+      {/* ==========================================
+          FORM
+      ========================================== */}
 
       <form
         className="form-card"
@@ -652,9 +652,11 @@ function PFESI() {
                 fontWeight: "700",
               }}
             >
+
               <X size={16} />
 
               Cancel Edit
+
             </button>
 
           </div>
@@ -684,6 +686,7 @@ function PFESI() {
 
             <label>
               <UserRound size={17} />
+
               Employee Code
             </label>
 
@@ -708,6 +711,7 @@ function PFESI() {
 
             <label>
               <UserRound size={17} />
+
               Employee Name
             </label>
 
@@ -732,6 +736,7 @@ function PFESI() {
 
             <label>
               <Building2 size={17} />
+
               Department
             </label>
 
@@ -771,6 +776,7 @@ function PFESI() {
 
             <label>
               <IndianRupee size={17} />
+
               Basic Salary
             </label>
 
@@ -795,6 +801,7 @@ function PFESI() {
 
             <label>
               <ShieldCheck size={17} />
+
               PF Number
             </label>
 
@@ -812,12 +819,13 @@ function PFESI() {
 
           </div>
 
-          {/* PF */}
+          {/* PF APPLICABLE */}
 
           <div className="form-group">
 
             <label>
               <ShieldCheck size={17} />
+
               PF Applicable
             </label>
 
@@ -848,6 +856,7 @@ function PFESI() {
 
             <label>
               <HeartPulse size={17} />
+
               ESI Number
             </label>
 
@@ -865,12 +874,13 @@ function PFESI() {
 
           </div>
 
-          {/* ESI */}
+          {/* ESI APPLICABLE */}
 
           <div className="form-group">
 
             <label>
               <HeartPulse size={17} />
+
               ESI Applicable
             </label>
 
@@ -901,6 +911,7 @@ function PFESI() {
 
             <label>
               <CalendarDays size={17} />
+
               Effective Date
             </label>
 
@@ -919,7 +930,9 @@ function PFESI() {
 
         </div>
 
-        {/* BUTTONS */}
+        {/* ==========================================
+            BUTTONS
+        ========================================== */}
 
         <div className="form-actions">
 
@@ -966,7 +979,9 @@ function PFESI() {
 
         </div>
 
-        {/* MESSAGE */}
+        {/* ==========================================
+            MESSAGE
+        ========================================== */}
 
         {message && (
           <div className="success-message">
@@ -982,7 +997,9 @@ function PFESI() {
 
       </form>
 
-      {/* RECORDS */}
+      {/* ==========================================
+          RECORDS
+      ========================================== */}
 
       <div
         className="form-card"
@@ -1001,7 +1018,7 @@ function PFESI() {
 
         </div>
 
-        {/* SEARCH TABLE */}
+        {/* SEARCH */}
 
         <div className="attendance-search">
 
@@ -1027,14 +1044,14 @@ function PFESI() {
           {loading ? (
 
             <div className="table-message">
-              Loading employee records...
+              Loading salary records...
             </div>
 
           ) : filteredRecords.length ===
             0 ? (
 
             <div className="table-message">
-              No employee records found.
+              No salary records found.
             </div>
 
           ) : (
@@ -1116,7 +1133,7 @@ function PFESI() {
 
                       <td>
                         {
-                          record.departmentCode ||
+                          record.department ||
                           "-"
                         }
                       </td>
@@ -1199,9 +1216,11 @@ function PFESI() {
                             )
                           }
                         >
+
                           <Pencil
                             size={16}
                           />
+
                         </button>
 
                         <button
@@ -1214,9 +1233,11 @@ function PFESI() {
                             )
                           }
                         >
+
                           <Trash2
                             size={17}
                           />
+
                         </button>
 
                       </td>
@@ -1241,4 +1262,3 @@ function PFESI() {
 }
 
 export default PFESI;
-

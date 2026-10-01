@@ -3,21 +3,37 @@ import { useState } from "react";
 import Login from "./pages/Login";
 
 import EmployeeMaster from "./pages/EmployeeMaster";
+import EmployeeReport from "./pages/EmployeeReport";
 import ExcelUpload from "./pages/ExcelUpload";
 import Attendance from "./pages/Attendance";
 import PFESI from "./pages/PFESI";
 
+// =====================================================
+// NEW PAGES
+// =====================================================
+
+import BankDetail from "./pages/BankDetail";
+import Qualification from "./pages/Qualification";
+
+// =====================================================
 // MASTER DATA
+// =====================================================
 
 import UnitMaster from "./pages/masters/UnitMaster";
 import DepartmentMaster from "./pages/masters/DepartmentMaster";
 import ContractorMaster from "./pages/masters/ContractorMaster";
 import DesignationMaster from "./pages/masters/DesignationMaster";
 
+// =====================================================
 // SECURITY
+// =====================================================
 
 import UserMaster from "./pages/security/UserMaster";
 import UserRights from "./pages/security/UserRights";
+
+// =====================================================
+// ICONS
+// =====================================================
 
 import {
   Users,
@@ -34,59 +50,149 @@ import {
 
 import "./App.css";
 
+// =====================================================
+// STORAGE KEY
+// =====================================================
+
+const LOGGED_IN_KEY =
+  "employeeMasterLoggedIn";
+
+const CURRENT_USER_KEY =
+  "employeeMasterCurrentUser";
+
+const CURRENT_USER_DATA_KEY =
+  "employeeMasterCurrentUserData";
+
+// =====================================================
+// APP
+// =====================================================
+
 function App() {
 
-  // ==========================================
-  // LOGIN
-  // ==========================================
+  // ===================================================
+  // LOGIN STATE
+  // ===================================================
 
   const [isLoggedIn, setIsLoggedIn] =
-    useState(false);
+    useState(() => {
 
-  // ==========================================
+      try {
+
+        return (
+          localStorage.getItem(
+            LOGGED_IN_KEY
+          ) === "true"
+        );
+
+      } catch {
+
+        return false;
+
+      }
+
+    });
+
+  // ===================================================
+  // CURRENT USER
+  // ===================================================
+
+  const [currentUser, setCurrentUser] =
+    useState(() => {
+
+      try {
+
+        const savedUser =
+          localStorage.getItem(
+            CURRENT_USER_DATA_KEY
+          );
+
+        return savedUser
+          ? JSON.parse(savedUser)
+          : null;
+
+      } catch {
+
+        return null;
+
+      }
+
+    });
+
+  // ===================================================
   // CURRENT PAGE
-  // ==========================================
+  // ===================================================
 
   const [currentForm, setCurrentForm] =
     useState("employee");
 
-  // ==========================================
+  // ===================================================
   // EMPLOYEE MENU
-  // ==========================================
+  // ===================================================
 
   const [employeeMenuOpen, setEmployeeMenuOpen] =
     useState(true);
 
-  // ==========================================
+  // ===================================================
   // MASTER MENU
-  // ==========================================
+  // ===================================================
 
   const [masterMenuOpen, setMasterMenuOpen] =
     useState(false);
 
-  // ==========================================
+  // ===================================================
   // SECURITY MENU
-  // ==========================================
+  // ===================================================
 
   const [securityMenuOpen, setSecurityMenuOpen] =
     useState(false);
 
-  // ==========================================
-  // OPEN MASTER
-  // ==========================================
+  // ===================================================
+  // LOGIN SUCCESS
+  // ===================================================
 
-  const openMaster = (formName) => {
-    setMasterMenuOpen(true);
-    setCurrentForm(formName);
-  };
+  const handleLogin = (user) => {
 
-  // ==========================================
-  // LOGOUT
-  // ==========================================
+    console.log(
+      "APP LOGIN SUCCESS:",
+      user
+    );
 
-  const handleLogout = () => {
+    // -----------------------------------------------
+    // SAVE LOGIN STATE
+    // -----------------------------------------------
 
-    setIsLoggedIn(false);
+    localStorage.setItem(
+      LOGGED_IN_KEY,
+      "true"
+    );
+
+    // -----------------------------------------------
+    // SAVE CURRENT USER
+    // -----------------------------------------------
+
+    if (user) {
+
+      localStorage.setItem(
+        CURRENT_USER_KEY,
+        String(
+          user.userId || ""
+        )
+      );
+
+      localStorage.setItem(
+        CURRENT_USER_DATA_KEY,
+        JSON.stringify(user)
+      );
+
+      setCurrentUser(user);
+
+    }
+
+    // -----------------------------------------------
+    // UPDATE STATE
+    // -----------------------------------------------
+
+    setIsLoggedIn(true);
 
     setCurrentForm("employee");
 
@@ -97,37 +203,91 @@ function App() {
     setSecurityMenuOpen(false);
   };
 
-  // ==========================================
+  // ===================================================
+  // LOGOUT
+  // ===================================================
+
+  const handleLogout = () => {
+
+    // -----------------------------------------------
+    // REMOVE LOGIN SESSION
+    // -----------------------------------------------
+
+    localStorage.removeItem(
+      LOGGED_IN_KEY
+    );
+
+    localStorage.removeItem(
+      CURRENT_USER_KEY
+    );
+
+    localStorage.removeItem(
+      CURRENT_USER_DATA_KEY
+    );
+
+    // -----------------------------------------------
+    // UPDATE STATE
+    // -----------------------------------------------
+
+    setIsLoggedIn(false);
+
+    setCurrentUser(null);
+
+    setCurrentForm("employee");
+
+    setEmployeeMenuOpen(true);
+
+    setMasterMenuOpen(false);
+
+    setSecurityMenuOpen(false);
+
+    console.log(
+      "USER LOGGED OUT"
+    );
+  };
+
+  // ===================================================
+  // OPEN MASTER
+  // ===================================================
+
+  const openMaster = (formName) => {
+
+    setMasterMenuOpen(true);
+
+    setCurrentForm(formName);
+  };
+
+  // ===================================================
   // LOGIN PAGE
-  // ==========================================
+  // ===================================================
 
   if (!isLoggedIn) {
 
     return (
       <Login
-        onLogin={() => {
-          setIsLoggedIn(true);
-          setCurrentForm("employee");
-        }}
+        onLogin={handleLogin}
       />
     );
 
   }
 
-  // ==========================================
+  // ===================================================
   // MAIN APPLICATION
-  // ==========================================
+  // ===================================================
 
   return (
+
     <div className="app-layout">
 
-      {/* ======================================
+      {/* =================================================
           SIDEBAR
-      ====================================== */}
+      ================================================= */}
 
       <aside className="sidebar">
 
-        {/* LOGO */}
+        {/* =================================================
+            LOGO
+        ================================================= */}
 
         <div className="sidebar-logo">
 
@@ -142,28 +302,65 @@ function App() {
           </div>
 
           <div>
-            <h2>SAI</h2>
+
+            <h2>
+              SAI
+            </h2>
+
           </div>
 
         </div>
 
-        {/* MENU */}
+        {/* =================================================
+            LOGGED USER
+        ================================================= */}
+
+        {currentUser && (
+
+          <div className="sidebar-user">
+
+            <div className="sidebar-user-name">
+
+              {currentUser.userName ||
+                currentUser.userId ||
+                "User"}
+
+            </div>
+
+            <div className="sidebar-user-role">
+
+              {currentUser.role ||
+                currentUser.passwordLevel ||
+                "USER"}
+
+            </div>
+
+          </div>
+
+        )}
+
+        {/* =================================================
+            MENU
+        ================================================= */}
 
         <div className="sidebar-menu">
 
-          {/* ==================================
-              EMPLOYEE MASTER
-          ================================== */}
+          {/* =================================================
+              1. EMPLOYEE MASTER
+          ================================================= */}
 
           <button
             type="button"
             className={
               currentForm === "employee" ||
+              currentForm === "employeeReport" ||
               currentForm === "excelUpload" ||
               currentForm === "unitMaster" ||
               currentForm === "departmentMaster" ||
               currentForm === "contractorMaster" ||
-              currentForm === "designationMaster"
+              currentForm === "designationMaster" ||
+              currentForm === "bankDetail" ||
+              currentForm === "qualification"
                 ? "menu-item active"
                 : "menu-item"
             }
@@ -173,7 +370,9 @@ function App() {
                 !employeeMenuOpen
               );
 
-              setCurrentForm("employee");
+              setCurrentForm(
+                "employee"
+              );
 
             }}
           >
@@ -195,16 +394,26 @@ function App() {
             <div className="menu-arrow">
 
               {employeeMenuOpen ? (
-                <ChevronDown size={17} />
+
+                <ChevronDown
+                  size={17}
+                />
+
               ) : (
-                <ChevronRight size={17} />
+
+                <ChevronRight
+                  size={17}
+                />
+
               )}
 
             </div>
 
           </button>
 
-          {/* EMPLOYEE SUBMENU */}
+          {/* =================================================
+              EMPLOYEE SUBMENU
+          ================================================= */}
 
           {employeeMenuOpen && (
 
@@ -220,7 +429,9 @@ function App() {
                     : "submenu-item"
                 }
                 onClick={() =>
-                  setCurrentForm("employee")
+                  setCurrentForm(
+                    "employee"
+                  )
                 }
               >
 
@@ -232,7 +443,37 @@ function App() {
 
               </button>
 
-              {/* EXCEL UPLOAD */}
+              {/* =================================================
+                  EMPLOYEE REPORT
+              ================================================= */}
+
+              <button
+                type="button"
+                className={
+                  currentForm === "employeeReport"
+                    ? "submenu-item active-submenu"
+                    : "submenu-item"
+                }
+                onClick={() =>
+                  setCurrentForm(
+                    "employeeReport"
+                  )
+                }
+              >
+
+                <FileSpreadsheet
+                  size={16}
+                />
+
+                <span>
+                  Employee Report
+                </span>
+
+              </button>
+
+              {/* =================================================
+                  EXCEL
+              ================================================= */}
 
               <button
                 type="button"
@@ -258,19 +499,17 @@ function App() {
 
               </button>
 
-              {/* MASTER DATA */}
+              {/* =================================================
+                  MASTER DATA
+              ================================================= */}
 
               <button
                 type="button"
                 className={
-                  currentForm ===
-                    "unitMaster" ||
-                  currentForm ===
-                    "departmentMaster" ||
-                  currentForm ===
-                    "contractorMaster" ||
-                  currentForm ===
-                    "designationMaster"
+                  currentForm === "unitMaster" ||
+                  currentForm === "departmentMaster" ||
+                  currentForm === "contractorMaster" ||
+                  currentForm === "designationMaster"
                     ? "submenu-item active-submenu"
                     : "submenu-item"
                 }
@@ -288,14 +527,24 @@ function App() {
                 </span>
 
                 {masterMenuOpen ? (
-                  <ChevronDown size={15} />
+
+                  <ChevronDown
+                    size={15}
+                  />
+
                 ) : (
-                  <ChevronRight size={15} />
+
+                  <ChevronRight
+                    size={15}
+                  />
+
                 )}
 
               </button>
 
-              {/* MASTER SUBMENU */}
+              {/* =================================================
+                  MASTER SUBMENU
+              ================================================= */}
 
               {masterMenuOpen && (
 
@@ -318,7 +567,9 @@ function App() {
                     }
                   >
 
-                    <Building2 size={15} />
+                    <Building2
+                      size={15}
+                    />
 
                     <span>
                       Unit Master
@@ -343,7 +594,9 @@ function App() {
                     }
                   >
 
-                    <Building2 size={15} />
+                    <Building2
+                      size={15}
+                    />
 
                     <span>
                       Department Master
@@ -368,7 +621,9 @@ function App() {
                     }
                   >
 
-                    <Users size={15} />
+                    <Users
+                      size={15}
+                    />
 
                     <span>
                       Contractor Master
@@ -411,9 +666,9 @@ function App() {
 
           )}
 
-          {/* ==================================
-              ATTENDANCE
-          ================================== */}
+          {/* =================================================
+              2. ATTENDANCE
+          ================================================= */}
 
           <button
             type="button"
@@ -422,12 +677,18 @@ function App() {
                 ? "menu-item active"
                 : "menu-item"
             }
-            onClick={() =>
-              setCurrentForm("attendance")
-            }
+            onClick={() => {
+
+              setCurrentForm(
+                "attendance"
+              );
+
+            }}
           >
 
-            <CalendarCheck size={19} />
+            <CalendarCheck
+              size={19}
+            />
 
             <div className="menu-text">
 
@@ -443,9 +704,9 @@ function App() {
 
           </button>
 
-          {/* ==================================
-              PF ESI SALARY
-          ================================== */}
+          {/* =================================================
+              3. PF / ESI / SALARY
+          ================================================= */}
 
           <button
             type="button"
@@ -454,12 +715,18 @@ function App() {
                 ? "menu-item active"
                 : "menu-item"
             }
-            onClick={() =>
-              setCurrentForm("pfesi")
-            }
+            onClick={() => {
+
+              setCurrentForm(
+                "pfesi"
+              );
+
+            }}
           >
 
-            <WalletCards size={19} />
+            <WalletCards
+              size={19}
+            />
 
             <div className="menu-text">
 
@@ -475,9 +742,9 @@ function App() {
 
           </button>
 
-          {/* ==================================
+          {/* =================================================
               4. SECURITY
-          ================================== */}
+          ================================================= */}
 
           <button
             type="button"
@@ -493,12 +760,16 @@ function App() {
                 !securityMenuOpen
               );
 
-              setCurrentForm("userMaster");
+              setCurrentForm(
+                "userMaster"
+              );
 
             }}
           >
 
-            <ShieldCheck size={19} />
+            <ShieldCheck
+              size={19}
+            />
 
             <div className="menu-text">
 
@@ -515,16 +786,26 @@ function App() {
             <div className="menu-arrow">
 
               {securityMenuOpen ? (
-                <ChevronDown size={17} />
+
+                <ChevronDown
+                  size={17}
+                />
+
               ) : (
-                <ChevronRight size={17} />
+
+                <ChevronRight
+                  size={17}
+                />
+
               )}
 
             </div>
 
           </button>
 
-          {/* SECURITY SUBMENU */}
+          {/* =================================================
+              SECURITY SUBMENU
+          ================================================= */}
 
           {securityMenuOpen && (
 
@@ -540,11 +821,15 @@ function App() {
                     : "submenu-item"
                 }
                 onClick={() =>
-                  setCurrentForm("userMaster")
+                  setCurrentForm(
+                    "userMaster"
+                  )
                 }
               >
 
-                <Users size={16} />
+                <Users
+                  size={16}
+                />
 
                 <span>
                   User Master
@@ -562,11 +847,15 @@ function App() {
                     : "submenu-item"
                 }
                 onClick={() =>
-                  setCurrentForm("userRights")
+                  setCurrentForm(
+                    "userRights"
+                  )
                 }
               >
 
-                <ShieldCheck size={16} />
+                <ShieldCheck
+                  size={16}
+                />
 
                 <span>
                   User Rights
@@ -580,19 +869,23 @@ function App() {
 
         </div>
 
-        {/* ====================================
+        {/* =================================================
             LOGOUT
-        ==================================== */}
+        ================================================= */}
 
         <div className="sidebar-bottom">
 
           <button
             type="button"
             className="logout-btn"
-            onClick={handleLogout}
+            onClick={
+              handleLogout
+            }
           >
 
-            <LogOut size={18} />
+            <LogOut
+              size={18}
+            />
 
             <span>
               Logout
@@ -604,57 +897,190 @@ function App() {
 
       </aside>
 
-      {/* ======================================
+      {/* =================================================
           MAIN CONTENT
-      ====================================== */}
+      ================================================= */}
 
       <main className="main-content">
 
+        {/* =================================================
+            EMPLOYEE INFORMATION
+        ================================================= */}
+
         {currentForm === "employee" && (
-          <EmployeeMaster />
+
+          <EmployeeMaster
+
+            onBankDetail={() =>
+              setCurrentForm(
+                "bankDetail"
+              )
+            }
+
+            onQualification={() =>
+              setCurrentForm(
+                "qualification"
+              )
+            }
+
+          />
+
         )}
+
+        {/* =================================================
+            EMPLOYEE REPORT
+        ================================================= */}
+
+        {currentForm === "employeeReport" && (
+
+          <EmployeeReport
+
+            onEmployeeInformation={() =>
+              setCurrentForm(
+                "employee"
+              )
+            }
+
+          />
+
+        )}
+
+        {/* =================================================
+            BANK DETAIL
+        ================================================= */}
+
+        {currentForm === "bankDetail" && (
+
+          <BankDetail
+
+            onEmployeeInformation={() =>
+              setCurrentForm(
+                "employee"
+              )
+            }
+
+            onQualification={() =>
+              setCurrentForm(
+                "qualification"
+              )
+            }
+
+          />
+
+        )}
+
+        {/* =================================================
+            QUALIFICATION
+        ================================================= */}
+
+        {currentForm === "qualification" && (
+
+          <Qualification
+
+            onEmployeeInformation={() =>
+              setCurrentForm(
+                "employee"
+              )
+            }
+
+            onBankDetail={() =>
+              setCurrentForm(
+                "bankDetail"
+              )
+            }
+
+          />
+
+        )}
+
+        {/* =================================================
+            EXCEL
+        ================================================= */}
 
         {currentForm === "excelUpload" && (
+
           <ExcelUpload />
+
         )}
+
+        {/* =================================================
+            UNIT
+        ================================================= */}
 
         {currentForm === "unitMaster" && (
+
           <UnitMaster />
+
         )}
 
-        {currentForm ===
-          "departmentMaster" && (
+        {/* =================================================
+            DEPARTMENT
+        ================================================= */}
+
+        {currentForm === "departmentMaster" && (
+
           <DepartmentMaster />
+
         )}
 
-        {currentForm ===
-          "contractorMaster" && (
+        {/* =================================================
+            CONTRACTOR
+        ================================================= */}
+
+        {currentForm === "contractorMaster" && (
+
           <ContractorMaster />
+
         )}
 
-        {currentForm ===
-          "designationMaster" && (
+        {/* =================================================
+            DESIGNATION
+        ================================================= */}
+
+        {currentForm === "designationMaster" && (
+
           <DesignationMaster />
+
         )}
+
+        {/* =================================================
+            ATTENDANCE
+        ================================================= */}
 
         {currentForm === "attendance" && (
+
           <Attendance />
+
         )}
+
+        {/* =================================================
+            PF ESI
+        ================================================= */}
 
         {currentForm === "pfesi" && (
+
           <PFESI />
+
         )}
 
-        {/* USER MASTER */}
+        {/* =================================================
+            USER MASTER
+        ================================================= */}
 
         {currentForm === "userMaster" && (
+
           <UserMaster />
+
         )}
 
-        {/* USER RIGHTS */}
+        {/* =================================================
+            USER RIGHTS
+        ================================================= */}
 
         {currentForm === "userRights" && (
+
           <UserRights />
+
         )}
 
       </main>

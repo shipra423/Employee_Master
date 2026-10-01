@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const salarySchema = new mongoose.Schema(
@@ -11,11 +10,13 @@ const salarySchema = new mongoose.Schema(
 
     employeeName: {
       type: String,
+      required: true,
       trim: true,
     },
 
     department: {
       type: String,
+      required: true,
       trim: true,
     },
 
@@ -26,6 +27,7 @@ const salarySchema = new mongoose.Schema(
 
     pfNumber: {
       type: String,
+      default: "",
       trim: true,
     },
 
@@ -36,6 +38,7 @@ const salarySchema = new mongoose.Schema(
 
     esiNumber: {
       type: String,
+      default: "",
       trim: true,
     },
 
@@ -46,6 +49,7 @@ const salarySchema = new mongoose.Schema(
 
     effectiveDate: {
       type: Date,
+      default: null,
     },
   },
   {
@@ -57,4 +61,3 @@ module.exports = mongoose.model(
   "Salary",
   salarySchema
 );
-

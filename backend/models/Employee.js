@@ -1,182 +1,121 @@
-
 const mongoose = require("mongoose");
 
 const employeeSchema = new mongoose.Schema(
   {
-    // ==========================================
-    // EMPLOYEE DETAILS
-    // ==========================================
-
     unitCode: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     employeeCode: {
       type: String,
-      trim: true,
       required: true,
+      unique: true,
+      trim: true,
     },
 
     employeeName: {
       type: String,
-      trim: true,
       required: true,
+      trim: true,
     },
 
     fatherName: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     dob: {
       type: Date,
       default: null,
     },
-    joiningDate: {
-  type: Date,
-  default: null,
-},
-
-resignDate: {
-  type: Date,
-  default: null,
-},
-
-creationDate: {
-  type: Date,
-  default: Date.now,
-},
 
     aadhar: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     contactNo: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     mailId: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
-
-    // ==========================================
-    // MASTER DATA
-    // ==========================================
 
     departmentCode: {
       type: String,
-      trim: true,
       required: true,
+      trim: true,
     },
 
     contractorCode: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     assignedShift: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     designation: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     category: {
       type: String,
-      trim: true,
       default: "",
+      trim: true,
     },
 
     reportingPerson: {
       type: String,
-      trim: true,
       default: "",
-    },
-
-    // ==========================================
-    // PF / ESI / SALARY
-    // ==========================================
-
-    basicSalary: {
-      type: Number,
-      default: 0,
-    },
-
-    pfApplicable: {
-      type: Boolean,
-      default: false,
-    },
-
-    pfNumber: {
-      type: String,
       trim: true,
-      default: "",
     },
 
-    esiApplicable: {
-      type: Boolean,
-      default: false,
-    },
-
-    esiNumber: {
-      type: String,
-      trim: true,
-      default: "",
-    },
-
-    effectiveDate: {
+    joiningDate: {
       type: Date,
       default: null,
     },
 
-    // ==========================================
-    // EXCEL / CSV EXTRA COLUMNS
-    // ==========================================
-    // Agar Excel/CSV mein future mein koi
-    // additional column aaye, jaise:
-    //
-    // Skill
-    // Grade
-    // Experience
-    // Location
-    //
-    // to woh yahan preserve hoga.
-    // ==========================================
+    resignDate: {
+      type: Date,
+      default: null,
+    },
 
-    excelData: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {},
+    creationDate: {
+      type: Date,
+      default: Date.now,
+    },
+
+    // =====================================================
+    // EMPLOYEE PHOTO
+    // =====================================================
+
+    photo: {
+      type: String,
+      default: "",
     },
   },
-
   {
     timestamps: true,
-
-    // Unknown fields ko directly Employee
-    // document mein add nahi karenge.
-    // Extra Excel/CSV fields excelData mein jayenge.
-    strict: true,
   }
 );
 
-module.exports =
-  mongoose.model(
-    "Employee",
-    employeeSchema
-  );
-
+module.exports = mongoose.model(
+  "Employee",
+  employeeSchema
+);

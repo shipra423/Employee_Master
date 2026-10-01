@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   ShieldCheck,
@@ -15,148 +15,252 @@ import {
   Search,
   X,
   FileText,
-  UserCog,
-  TableProperties,
+  AlertCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 import "../../styles/UserMaster.css";
 
+const API_URL = "http://localhost:5000/api/users";
+
+const UNITS_API_URL = "http://localhost:5000/api/units";
+
+const EMPLOYEES_API_URL =
+  "http://localhost:5000/api/users/employees";
+
+const initialForm = {
+  unit: "",
+  empId: "",
+  userId: "",
+  userName: "",
+  password: "",
+  confirmPassword: "",
+  validFrom: "",
+  validTo: "",
+  valid: "YES",
+  pwdChangeDays: "",
+  passwordLevel: "USER",
+};
+
 function UserMaster() {
   // =====================================================
-  // FORM OPEN / CLOSE
-  // =====================================================
-
-  const [showForm, setShowForm] = useState(false);
-
-  // =====================================================
-  // USER LIST
+  // STATE
   // =====================================================
 
   const [users, setUsers] = useState([]);
 
-  // =====================================================
-  // EDIT MODE
-  // =====================================================
+  const [units, setUnits] = useState([]);
 
-  const [editIndex, setEditIndex] = useState(null);
-
-  // =====================================================
-  // SEARCH
-  // =====================================================
-
-  const [search, setSearch] = useState("");
-
-  // =====================================================
-  // SECURITY TAB
-  // =====================================================
-
-  const [activeSecurityTab, setActiveSecurityTab] =
-    useState(null);
-
-  // =====================================================
-  // ROLE OPTIONS
-  // =====================================================
-
-  const roleOptions = [
-    "NONE",
-    "PURCHASE",
-    "HR",
-    "PRODUCTION",
-    "ACCOUNT",
-    "SALES",
-    "MAIN STORE",
-  ];
-
-  // =====================================================
-  // ROLE DATA
-  // =====================================================
-
-  const [roles, setRoles] = useState([
-    {
-      userRole: "",
-      roleName: "",
-    },
-    {
-      userRole: "",
-      roleName: "",
-    },
-    {
-      userRole: "",
-      roleName: "",
-    },
-    {
-      userRole: "",
-      roleName: "",
-    },
-    {
-      userRole: "",
-      roleName: "",
-    },
-  ]);
-
-  // =====================================================
-  // UNIT AUTHORIZATION DATA
-  // =====================================================
-
-  const [authorizedUnits, setAuthorizedUnits] =
-    useState([
-      {
-        unitCode: "",
-        unitName: "",
-      },
-      {
-        unitCode: "",
-        unitName: "",
-      },
-      {
-        unitCode: "",
-        unitName: "",
-      },
-      {
-        unitCode: "",
-        unitName: "",
-      },
-      {
-        unitCode: "",
-        unitName: "",
-      },
-    ]);
-
-  // =====================================================
-  // FORM DATA
-  // =====================================================
-
-  const initialForm = {
-    unit: "",
-    userId: "",
-    empId: "",
-    userName: "",
-    password: "",
-    confirmPassword: "",
-    validFrom: "",
-    validTo: "",
-    valid: "YES",
-    msgBeforeDays: "",
-    pwdChangeDays: "",
-    passwordLevel: "",
-  };
+  const [employees, setEmployees] = useState([]);
 
   const [formData, setFormData] =
     useState(initialForm);
 
+  const [showForm, setShowForm] =
+    useState(false);
+
+  const [editId, setEditId] =
+    useState(null);
+
+  const [search, setSearch] =
+    useState("");
+
+  const [error, setError] =
+    useState("");
+
+  const [success, setSuccess] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
   // =====================================================
-  // MESSAGE
+  // PASSWORD VISIBILITY
   // =====================================================
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
+
+  const [visiblePasswords, setVisiblePasswords] =
+    useState({});
 
   // =====================================================
-  // HANDLE INPUT
+  // ADMIN CHECK
+  // =====================================================
+
+  /*
+    IMPORTANT:
+    Login ke time tumhare project mein jo admin/user
+    role localStorage mein save hota hai uske according
+    ye values check hongi.
+
+    Example:
+    localStorage.setItem("passwordLevel", "ADMIN");
+
+    Ya:
+    localStorage.setItem("userRole", "ADMIN");
+  */
+
+  const getLoggedInRole = () => {
+    const role =
+      localStorage.getItem("passwordLevel") ||
+      localStorage.getItem("userRole") ||
+      localStorage.getItem("role") ||
+      localStorage.getItem("userType") ||
+      "";
+
+    return String(role).trim().toUpperCase();
+  };
+
+  const isAdmin =
+    getLoggedInRole() === "ADMIN";
+
+  // =====================================================
+  // LOAD USERS
+  // =====================================================
+
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+
+      const response =
+        await fetch(API_URL);
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to load users."
+        );
+      }
+
+      setUsers(
+        Array.isArray(data)
+          ? data
+          : []
+      );
+    } catch (err) {
+      console.error(
+        "LOAD USERS ERROR:",
+        err
+      );
+
+      setError(
+        err.message ||
+          "Failed to load users."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // =====================================================
+  // LOAD UNITS
+  // =====================================================
+
+  const loadUnits = async () => {
+    try {
+      const response =
+        await fetch(
+          UNITS_API_URL
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to load units."
+        );
+      }
+
+      setUnits(
+        Array.isArray(data)
+          ? data
+          : []
+      );
+    } catch (err) {
+      console.error(
+        "LOAD UNITS ERROR:",
+        err
+      );
+
+      setUnits([]);
+    }
+  };
+
+  // =====================================================
+  // LOAD EMPLOYEES
+  // =====================================================
+
+  const loadEmployees = async () => {
+    try {
+      const response =
+        await fetch(
+          EMPLOYEES_API_URL
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to load employees."
+        );
+      }
+
+      setEmployees(
+        Array.isArray(data)
+          ? data
+          : []
+      );
+
+      console.log(
+        "Employees:",
+        data
+      );
+    } catch (err) {
+      console.error(
+        "LOAD EMPLOYEES ERROR:",
+        err
+      );
+
+      setEmployees([]);
+
+      setError(
+        err.message ||
+          "Failed to load Employee Master."
+      );
+    }
+  };
+
+  // =====================================================
+  // INITIAL LOAD
+  // =====================================================
+
+  useEffect(() => {
+    loadUsers();
+    loadUnits();
+    loadEmployees();
+  }, []);
+
+  // =====================================================
+  // HANDLE CHANGE
   // =====================================================
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const {
+      name,
+      value,
+    } = e.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -168,18 +272,59 @@ function UserMaster() {
   };
 
   // =====================================================
+  // EMPLOYEE SELECT
+  // =====================================================
+
+  const handleEmployeeChange = (e) => {
+    const employeeCode =
+      e.target.value.trim();
+
+    const selectedEmployee =
+      employees.find(
+        (employee) =>
+          String(
+            employee.employeeCode || ""
+          ).trim() ===
+          employeeCode
+      );
+
+    if (!selectedEmployee) {
+      setFormData((prev) => ({
+        ...prev,
+        empId: "",
+        userName: "",
+      }));
+
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+
+      empId:
+        selectedEmployee.employeeCode,
+
+      userName:
+        selectedEmployee.employeeName ||
+        "",
+    }));
+
+    setError("");
+    setSuccess("");
+  };
+
+  // =====================================================
   // PASSWORD VALIDATION
   // =====================================================
 
-  const validatePassword = (password) => {
-    const hasLetter = /[A-Za-z]/.test(password);
-    const hasNumber = /[0-9]/.test(password);
-    const hasSpecial = /[!@#$%^&*~]/.test(password);
-
+  const validatePassword = (
+    password
+  ) => {
     return (
-      hasLetter &&
-      hasNumber &&
-      hasSpecial
+      password.length >= 5 &&
+      /[A-Za-z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[!@#$%^&*~]/.test(password)
     );
   };
 
@@ -188,332 +333,488 @@ function UserMaster() {
   // =====================================================
 
   const resetForm = () => {
-    setFormData(initialForm);
-    setEditIndex(null);
-    setError("");
-    setSuccess("");
-  };
-
-  // =====================================================
-  // CLOSE FORM
-  // =====================================================
-
-  const closeForm = () => {
-    resetForm();
-    setShowForm(false);
-    setActiveSecurityTab(null);
-  };
-
-  // =====================================================
-  // ADD / UPDATE USER
-  // =====================================================
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    setError("");
-    setSuccess("");
-
-    if (
-      !formData.unit ||
-      !formData.userId ||
-      !formData.empId ||
-      !formData.userName ||
-      !formData.password ||
-      !formData.confirmPassword ||
-      !formData.validFrom ||
-      !formData.validTo
-    ) {
-      setError(
-        "Please fill all required fields."
-      );
-      return;
-    }
-
-    if (
-      formData.password !==
-      formData.confirmPassword
-    ) {
-      setError(
-        "Password and Confirm Password do not match."
-      );
-      return;
-    }
-
-    if (
-      !validatePassword(
-        formData.password
-      )
-    ) {
-      setError(
-        "Password must contain a letter, number and special character."
-      );
-      return;
-    }
-
-    const duplicateUser = users.some(
-      (user, index) =>
-        user.userId.toLowerCase() ===
-          formData.userId.toLowerCase() &&
-        index !== editIndex
-    );
-
-    if (duplicateUser) {
-      setError(
-        "This User ID already exists."
-      );
-      return;
-    }
-
-    // =================================================
-    // UPDATE USER
-    // =================================================
-
-    if (editIndex !== null) {
-      const updatedUsers = [...users];
-
-      updatedUsers[editIndex] = {
-        ...formData,
-      };
-
-      setUsers(updatedUsers);
-
-      setSuccess(
-        "User updated successfully."
-      );
-
-      setEditIndex(null);
-    }
-
-    // =================================================
-    // ADD USER
-    // =================================================
-
-    else {
-      setUsers((prev) => [
-        ...prev,
-        {
-          ...formData,
-        },
-      ]);
-
-      setSuccess(
-        "User added successfully."
-      );
-    }
-
-    setFormData(initialForm);
-  };
-
-  // =====================================================
-  // EDIT USER
-  // =====================================================
-
-  const handleEdit = (index) => {
-    setFormData(users[index]);
-
-    setEditIndex(index);
-
-    setShowForm(true);
-
-    setError("");
-    setSuccess("");
-  };
-
-  // =====================================================
-  // DELETE USER
-  // =====================================================
-
-  const handleDelete = (index) => {
-    const confirmDelete =
-      window.confirm(
-        "Are you sure you want to delete this user?"
-      );
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    setUsers((prev) =>
-      prev.filter(
-        (_, i) => i !== index
-      )
-    );
-
-    setSuccess(
-      "User deleted successfully."
-    );
-  };
-
-  // =====================================================
-  // FILTER USERS
-  // =====================================================
-
-  const filteredUsers =
-    users.filter((user) => {
-      const text =
-        search.toLowerCase();
-
-      return (
-        user.userId
-          .toLowerCase()
-          .includes(text) ||
-        user.userName
-          .toLowerCase()
-          .includes(text) ||
-        user.empId
-          .toLowerCase()
-          .includes(text)
-      );
+    setFormData({
+      ...initialForm,
     });
+
+    setEditId(null);
+
+    setShowPassword(false);
+
+    setShowConfirmPassword(false);
+
+    setError("");
+
+    setSuccess("");
+  };
 
   // =====================================================
   // ADD USER
   // =====================================================
 
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     resetForm();
 
     setShowForm(true);
 
-    setActiveSecurityTab(null);
+    await loadEmployees();
   };
 
   // =====================================================
-  // ROLE CHANGE
+  // CLOSE
   // =====================================================
 
-  const handleRoleChange = (
-    index,
-    field,
-    value
-  ) => {
-    setRoles((prev) =>
-      prev.map((role, i) =>
-        i === index
-          ? {
-              ...role,
-              [field]: value,
+  const handleClose = () => {
+    resetForm();
 
-              // Role Name automatically same
-              // as selected User Role
-              ...(field === "userRole"
-                ? {
-                    roleName: value,
-                  }
-                : {}),
-            }
-          : role
-      )
-    );
+    setShowForm(false);
+  };
+
+  // =====================================================
+  // SUBMIT
+  // =====================================================
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     setError("");
     setSuccess("");
-  };
 
-  // =====================================================
-  // UPDATE ROLE
-  // =====================================================
+    // -------------------------------------------------
+    // REQUIRED
+    // -------------------------------------------------
 
-  const updateRole = (index) => {
-    const selectedRole =
-      roles[index].userRole;
-
-    if (!selectedRole) {
+    if (!formData.unit.trim()) {
       setError(
-        "Please select a role first."
+        "Unit is required."
       );
-
-      setSuccess("");
-
       return;
     }
 
-    setError("");
+    if (!formData.empId.trim()) {
+      setError(
+        "Employee ID is required."
+      );
+      return;
+    }
 
-    setSuccess(
-      `${selectedRole} role updated successfully.`
-    );
+    if (
+      !editId &&
+      !formData.password
+    ) {
+      setError(
+        "Password is required."
+      );
+      return;
+    }
+
+    if (
+      !editId &&
+      !formData.confirmPassword
+    ) {
+      setError(
+        "Confirm Password is required."
+      );
+      return;
+    }
+
+    if (!formData.validFrom) {
+      setError(
+        "Valid From date is required."
+      );
+      return;
+    }
+
+    if (!formData.validTo) {
+      setError(
+        "Valid To date is required."
+      );
+      return;
+    }
+
+    if (
+      formData.validFrom >
+      formData.validTo
+    ) {
+      setError(
+        "Valid To cannot be before Valid From."
+      );
+      return;
+    }
+
+    // -------------------------------------------------
+    // PASSWORD
+    // -------------------------------------------------
+
+    if (
+      formData.password ||
+      formData.confirmPassword
+    ) {
+      if (
+        formData.password !==
+        formData.confirmPassword
+      ) {
+        setError(
+          "Password and Confirm Password do not match."
+        );
+        return;
+      }
+
+      if (
+        !validatePassword(
+          formData.password
+        )
+      ) {
+        setError(
+          "Password must contain at least 5 characters, a letter, a number and a special character."
+        );
+        return;
+      }
+    }
+
+    // -------------------------------------------------
+    // SAVE
+    // -------------------------------------------------
+
+    try {
+      setLoading(true);
+
+      const userData = {
+        unit:
+          formData.unit.trim(),
+
+        empId:
+          formData.empId.trim(),
+
+        userName:
+          formData.userName.trim(),
+
+        validFrom:
+          formData.validFrom,
+
+        validTo:
+          formData.validTo,
+
+        valid:
+          formData.valid || "YES",
+
+        pwdChangeDays:
+          formData.pwdChangeDays === ""
+            ? 0
+            : Number(
+                formData.pwdChangeDays
+              ),
+
+        passwordLevel:
+          formData.passwordLevel ||
+          "USER",
+      };
+
+      // Password only if entered
+      if (formData.password) {
+        userData.password =
+          formData.password;
+      }
+
+      const url = editId
+        ? `${API_URL}/${editId}`
+        : API_URL;
+
+      const method = editId
+        ? "PUT"
+        : "POST";
+
+      const response =
+        await fetch(url, {
+          method,
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify(
+            userData
+          ),
+        });
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to save user."
+        );
+      }
+
+      setSuccess(
+        editId
+          ? "User updated successfully."
+          : `User ${
+              data.user?.userId || ""
+            } created successfully.`
+      );
+
+      await loadUsers();
+
+      await loadEmployees();
+
+      resetForm();
+
+      setTimeout(() => {
+        setShowForm(false);
+
+        setSuccess("");
+      }, 1200);
+
+    } catch (err) {
+      console.error(
+        "SAVE USER ERROR:",
+        err
+      );
+
+      setError(
+        err.message ||
+          "Failed to save user."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   // =====================================================
-  // ADD ROLE ROW
+  // EDIT
   // =====================================================
 
-  const addRoleRow = () => {
-    setRoles((prev) => [
-      ...prev,
-      {
-        userRole: "",
-        roleName: "",
-      },
-    ]);
+  const handleEdit = (user) => {
+    /*
+      Backend se password aa raha hai to yahan
+      existing password fill ho jayega.
+
+      Agar backend password nahi bhej raha:
+      formData.password blank rahega.
+    */
+
+    const existingPassword =
+      user.password || "";
+
+    setFormData({
+      unit:
+        user.unit || "",
+
+      empId:
+        user.empId || "",
+
+      userId:
+        user.userId || "",
+
+      userName:
+        user.userName || "",
+
+      password:
+        existingPassword,
+
+      confirmPassword:
+        existingPassword,
+
+      validFrom:
+        user.validFrom
+          ? String(
+              user.validFrom
+            ).substring(0, 10)
+          : "",
+
+      validTo:
+        user.validTo
+          ? String(
+              user.validTo
+            ).substring(0, 10)
+          : "",
+
+      valid:
+        user.valid || "YES",
+
+      pwdChangeDays:
+        user.pwdChangeDays ??
+        "",
+
+      passwordLevel:
+        user.passwordLevel ||
+        "USER",
+    });
+
+    setEditId(user._id);
+
+    setShowPassword(false);
+
+    setShowConfirmPassword(false);
+
+    setShowForm(true);
 
     setError("");
+
     setSuccess("");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   // =====================================================
-  // REMOVE ROLE
+  // DELETE
   // =====================================================
 
-  const removeRole = (index) => {
-    setRoles((prev) =>
-      prev.filter(
-        (_, i) => i !== index
-      )
-    );
+  const handleDelete = async (user) => {
+    const confirmed =
+      window.confirm(
+        `Delete user "${user.userId}"?`
+      );
 
-    setError("");
+    if (!confirmed) {
+      return;
+    }
 
-    setSuccess(
-      "Role removed successfully."
-    );
+    try {
+      setLoading(true);
+
+      const response =
+        await fetch(
+          `${API_URL}/${user._id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to delete user."
+        );
+      }
+
+      setSuccess(
+        "User deleted successfully."
+      );
+
+      await loadUsers();
+
+      await loadEmployees();
+
+    } catch (err) {
+      console.error(
+        "DELETE USER ERROR:",
+        err
+      );
+
+      setError(
+        err.message ||
+          "Failed to delete user."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   // =====================================================
-  // UNIT CHANGE
+  // PASSWORD VISIBILITY IN TABLE
   // =====================================================
 
-  const handleUnitChange = (
-    index,
-    field,
-    value
+  const toggleTablePassword = (
+    userId
   ) => {
-    setAuthorizedUnits((prev) =>
-      prev.map((unit, i) =>
-        i === index
-          ? {
-              ...unit,
-              [field]: value,
-            }
-          : unit
-      )
-    );
-
-    setError("");
-    setSuccess("");
-  };
-
-  // =====================================================
-  // ADD UNIT ROW
-  // =====================================================
-
-  const addUnitRow = () => {
-    setAuthorizedUnits((prev) => [
+    setVisiblePasswords((prev) => ({
       ...prev,
-      {
-        unitCode: "",
-        unitName: "",
-      },
-    ]);
-
-    setError("");
-    setSuccess("");
+      [userId]:
+        !prev[userId],
+    }));
   };
 
   // =====================================================
-  // RENDER
+  // SEARCH
+  // =====================================================
+
+  const searchValue =
+    search
+      .trim()
+      .toLowerCase();
+
+  const filteredUsers =
+    users.filter((user) => {
+      if (!searchValue) {
+        return true;
+      }
+
+      return (
+        String(
+          user.userId || ""
+        )
+          .toLowerCase()
+          .includes(searchValue) ||
+
+        String(
+          user.userName || ""
+        )
+          .toLowerCase()
+          .includes(searchValue) ||
+
+        String(
+          user.empId || ""
+        )
+          .toLowerCase()
+          .includes(searchValue) ||
+
+        String(
+          user.unit || ""
+        )
+          .toLowerCase()
+          .includes(searchValue)
+      );
+    });
+
+  // =====================================================
+  // UNIT VALUE
+  // =====================================================
+
+  const getUnitValue = (unit) => {
+    return (
+      unit.unitCode ||
+      unit.code ||
+      unit.name ||
+      ""
+    );
+  };
+
+  // =====================================================
+  // FORMAT PASSWORD
+  // =====================================================
+
+  const getPasswordDisplay = (
+    user
+  ) => {
+    if (!isAdmin) {
+      return "********";
+    }
+
+    if (!user.password) {
+      return "Not available";
+    }
+
+    if (
+      visiblePasswords[user._id]
+    ) {
+      return user.password;
+    }
+
+    return "********";
+  };
+
+  // =====================================================
+  // UI
   // =====================================================
 
   return (
@@ -532,9 +833,11 @@ function UserMaster() {
           </div>
 
           <div>
-            <h1>
-              User Master
-            </h1>
+            <h1>User Master</h1>
+
+            <p>
+              Manage system users and security access
+            </p>
           </div>
 
         </div>
@@ -546,24 +849,43 @@ function UserMaster() {
             onClick={handleAddUser}
           >
             <Plus size={17} />
+
             Add User
           </button>
         )}
 
       </div>
 
+      {/* =================================================
+          SUCCESS
+      ================================================= */}
+
+      {success && (
+        <div className="user-master-success">
+          {success}
+        </div>
+      )}
 
       {/* =================================================
-          ADD / EDIT USER FORM
+          ERROR
+      ================================================= */}
+
+      {error && !showForm && (
+        <div className="user-master-error">
+
+          <AlertCircle size={17} />
+
+          {error}
+
+        </div>
+      )}
+
+      {/* =================================================
+          FORM
       ================================================= */}
 
       {showForm && (
-
         <div className="user-master-content">
-
-          {/* =================================================
-              FORM CARD
-          ================================================= */}
 
           <div className="user-master-card">
 
@@ -574,7 +896,7 @@ function UserMaster() {
                 <UserRound size={19} />
 
                 <h2>
-                  {editIndex !== null
+                  {editId
                     ? "Edit User"
                     : "Add New User"}
                 </h2>
@@ -584,33 +906,22 @@ function UserMaster() {
               <button
                 type="button"
                 className="user-master-close-btn"
-                onClick={closeForm}
+                onClick={handleClose}
               >
                 <X size={17} />
               </button>
 
             </div>
 
-
-            {/* ERROR */}
-
             {error && (
               <div className="user-master-error">
+
+                <AlertCircle size={17} />
+
                 {error}
+
               </div>
             )}
-
-
-            {/* SUCCESS */}
-
-            {success && (
-              <div className="user-master-success">
-                {success}
-              </div>
-            )}
-
-
-            {/* FORM */}
 
             <form
               className="user-master-form"
@@ -619,7 +930,9 @@ function UserMaster() {
 
               <div className="user-master-form-grid">
 
-                {/* UNIT */}
+                {/* =================================================
+                    UNIT
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
@@ -643,103 +956,149 @@ function UserMaster() {
                       Select Unit
                     </option>
 
-                    <option value="UNIT-01">
-                      UNIT-01
-                    </option>
+                    {units.map((unit) => {
 
-                    <option value="UNIT-02">
-                      UNIT-02
-                    </option>
+                      const value =
+                        getUnitValue(unit);
 
-                    <option value="UNIT-03">
-                      UNIT-03
-                    </option>
+                      return (
+                        <option
+                          key={
+                            unit._id ||
+                            value
+                          }
+                          value={value}
+                        >
+                          {unit.unitName
+                            ? `${value} - ${unit.unitName}`
+                            : value}
+                        </option>
+                      );
+                    })}
 
                   </select>
 
                 </div>
 
-
-                {/* USER ID */}
+                {/* =================================================
+                    EMPLOYEE ID
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
+                    <UserRound size={15} />
+
+                    Employee ID
+
+                    <span className="required-star">
+                      *
+                    </span>
+
+                  </label>
+
+                  <select
+                    name="empId"
+                    value={formData.empId}
+                    onChange={
+                      handleEmployeeChange
+                    }
+                  >
+
+                    <option value="">
+                      Select Employee
+                    </option>
+
+                    {employees.map(
+                      (employee) => (
+
+                        <option
+                          key={
+                            employee._id ||
+                            employee.employeeCode
+                          }
+                          value={
+                            employee.employeeCode
+                          }
+                        >
+
+                          {
+                            employee.employeeCode
+                          }
+
+                          {employee.employeeName
+                            ? ` - ${employee.employeeName}`
+                            : ""}
+
+                        </option>
+
+                      )
+                    )}
+
+                  </select>
+
+                </div>
+
+                {/* =================================================
+                    USER ID
+                ================================================= */}
+
+                <div className="user-master-form-group">
+
+                  <label>
+
                     <Users size={15} />
 
                     User ID
 
-                    <span className="required-star">
-                      *
-                    </span>
                   </label>
 
                   <input
                     type="text"
-                    name="userId"
-                    value={formData.userId}
-                    onChange={handleChange}
-                    placeholder="Enter User ID"
+                    value={
+                      formData.userId
+                    }
+                    readOnly
+                    placeholder="Auto generated"
                   />
 
                 </div>
 
-
-                {/* EMP ID */}
-
-                <div className="user-master-form-group">
-
-                  <label>
-                    <UserRound size={15} />
-
-                    Emp ID
-
-                    <span className="required-star">
-                      *
-                    </span>
-                  </label>
-
-                  <input
-                    type="text"
-                    name="empId"
-                    value={formData.empId}
-                    onChange={handleChange}
-                    placeholder="Enter Employee ID"
-                  />
-
-                </div>
-
-
-                {/* USER NAME */}
+                {/* =================================================
+                    USER NAME
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
                     <UserRound size={15} />
 
                     User Name
 
-                    <span className="required-star">
-                      *
-                    </span>
                   </label>
 
                   <input
                     type="text"
                     name="userName"
-                    value={formData.userName}
-                    onChange={handleChange}
-                    placeholder="Enter User Name"
+                    value={
+                      formData.userName
+                    }
+                    readOnly
+                    placeholder="Employee name"
                   />
 
                 </div>
 
-
-                {/* PASSWORD */}
+                {/* =================================================
+                    PASSWORD
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
                     <KeyRound size={15} />
 
                     Password
@@ -747,24 +1106,112 @@ function UserMaster() {
                     <span className="required-star">
                       *
                     </span>
+
                   </label>
 
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Enter Password"
-                  />
+                  <div
+                    style={{
+                      position:
+                        "relative",
+                    }}
+                  >
+
+                    <input
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="password"
+                      value={
+                        formData.password
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      placeholder={
+                        editId
+                          ? "Existing password / enter new password"
+                          : "Enter Password"
+                      }
+                      autoComplete="new-password"
+                      style={{
+                        paddingRight:
+                          "42px",
+                      }}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(
+                          (prev) =>
+                            !prev
+                        )
+                      }
+                      style={{
+                        position:
+                          "absolute",
+                        right:
+                          "10px",
+                        top:
+                          "50%",
+                        transform:
+                          "translateY(-50%)",
+                        border:
+                          "none",
+                        background:
+                          "transparent",
+                        cursor:
+                          "pointer",
+                        padding:
+                          "4px",
+                        display:
+                          "flex",
+                        alignItems:
+                          "center",
+                      }}
+                    >
+
+                      {showPassword ? (
+                        <EyeOff
+                          size={18}
+                        />
+                      ) : (
+                        <Eye
+                          size={18}
+                        />
+                      )}
+
+                    </button>
+
+                  </div>
+
+                  {editId &&
+                    !formData.password && (
+                      <small
+                        style={{
+                          color:
+                            "#777",
+                          marginTop:
+                            "5px",
+                        }}
+                      >
+                        Existing password was not returned by
+                        the server.
+                      </small>
+                    )}
 
                 </div>
 
-
-                {/* CONFIRM PASSWORD */}
+                {/* =================================================
+                    CONFIRM PASSWORD
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
                     <KeyRound size={15} />
 
                     Confirm Password
@@ -772,26 +1219,93 @@ function UserMaster() {
                     <span className="required-star">
                       *
                     </span>
+
                   </label>
 
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={
-                      formData.confirmPassword
-                    }
-                    onChange={handleChange}
-                    placeholder="Confirm Password"
-                  />
+                  <div
+                    style={{
+                      position:
+                        "relative",
+                    }}
+                  >
+
+                    <input
+                      type={
+                        showConfirmPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="confirmPassword"
+                      value={
+                        formData.confirmPassword
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      placeholder="Re-enter Password"
+                      autoComplete="new-password"
+                      style={{
+                        paddingRight:
+                          "42px",
+                      }}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(
+                          (prev) =>
+                            !prev
+                        )
+                      }
+                      style={{
+                        position:
+                          "absolute",
+                        right:
+                          "10px",
+                        top:
+                          "50%",
+                        transform:
+                          "translateY(-50%)",
+                        border:
+                          "none",
+                        background:
+                          "transparent",
+                        cursor:
+                          "pointer",
+                        padding:
+                          "4px",
+                        display:
+                          "flex",
+                        alignItems:
+                          "center",
+                      }}
+                    >
+
+                      {showConfirmPassword ? (
+                        <EyeOff
+                          size={18}
+                        />
+                      ) : (
+                        <Eye
+                          size={18}
+                        />
+                      )}
+
+                    </button>
+
+                  </div>
 
                 </div>
 
-
-                {/* VALID FROM */}
+                {/* =================================================
+                    VALID FROM
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
                     <CalendarDays size={15} />
 
                     Valid From
@@ -799,6 +1313,7 @@ function UserMaster() {
                     <span className="required-star">
                       *
                     </span>
+
                   </label>
 
                   <input
@@ -807,17 +1322,21 @@ function UserMaster() {
                     value={
                       formData.validFrom
                     }
-                    onChange={handleChange}
+                    onChange={
+                      handleChange
+                    }
                   />
 
                 </div>
 
-
-                {/* VALID TO */}
+                {/* =================================================
+                    VALID TO
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
                     <CalendarDays size={15} />
 
                     Valid To
@@ -825,6 +1344,7 @@ function UserMaster() {
                     <span className="required-star">
                       *
                     </span>
+
                   </label>
 
                   <input
@@ -833,26 +1353,35 @@ function UserMaster() {
                     value={
                       formData.validTo
                     }
-                    onChange={handleChange}
+                    onChange={
+                      handleChange
+                    }
                   />
 
                 </div>
 
-
-                {/* VALID */}
+                {/* =================================================
+                    VALID
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
                     <ShieldCheck size={15} />
 
                     Valid
+
                   </label>
 
                   <select
                     name="valid"
-                    value={formData.valid}
-                    onChange={handleChange}
+                    value={
+                      formData.valid
+                    }
+                    onChange={
+                      handleChange
+                    }
                   >
 
                     <option value="YES">
@@ -867,63 +1396,47 @@ function UserMaster() {
 
                 </div>
 
-
-                {/* MSG BEFORE DAYS */}
-
-                <div className="user-master-form-group">
-
-                  <label>
-                    <CalendarDays size={15} />
-
-                    Msg Before Days
-                  </label>
-
-                  <input
-                    type="number"
-                    name="msgBeforeDays"
-                    value={
-                      formData.msgBeforeDays
-                    }
-                    onChange={handleChange}
-                    placeholder="Enter days"
-                    min="0"
-                  />
-
-                </div>
-
-
-                {/* PWD CHANGE DAYS */}
+                {/* =================================================
+                    PASSWORD CHANGE DAYS
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
                     <KeyRound size={15} />
 
                     Pwd Change Days
+
                   </label>
 
                   <input
                     type="number"
                     name="pwdChangeDays"
+                    min="0"
                     value={
                       formData.pwdChangeDays
                     }
-                    onChange={handleChange}
+                    onChange={
+                      handleChange
+                    }
                     placeholder="Enter days"
-                    min="0"
                   />
 
                 </div>
 
-
-                {/* PASSWORD LEVEL */}
+                {/* =================================================
+                    PASSWORD LEVEL
+                ================================================= */}
 
                 <div className="user-master-form-group">
 
                   <label>
+
                     <KeyRound size={15} />
 
                     Password Level
+
                   </label>
 
                   <select
@@ -931,19 +1444,17 @@ function UserMaster() {
                     value={
                       formData.passwordLevel
                     }
-                    onChange={handleChange}
+                    onChange={
+                      handleChange
+                    }
                   >
 
-                    <option value="">
-                      Select Level
+                    <option value="USER">
+                      User
                     </option>
 
                     <option value="ADMIN">
                       Admin
-                    </option>
-
-                    <option value="USER">
-                      User
                     </option>
 
                     <option value="VIEWER">
@@ -956,38 +1467,61 @@ function UserMaster() {
 
               </div>
 
-
-              {/* FORM ACTIONS */}
+              {/* =================================================
+                  ACTIONS
+              ================================================= */}
 
               <div className="user-master-form-actions">
 
                 <button
                   type="button"
                   className="user-master-clear-btn"
-                  onClick={resetForm}
+                  onClick={
+                    resetForm
+                  }
+                  disabled={
+                    loading
+                  }
                 >
-                  <RotateCcw size={16} />
-                  Reset
-                </button>
 
+                  <RotateCcw
+                    size={16}
+                  />
+
+                  Reset
+
+                </button>
 
                 <button
                   type="button"
                   className="user-master-clear-btn"
-                  onClick={closeForm}
+                  onClick={
+                    handleClose
+                  }
+                  disabled={
+                    loading
+                  }
                 >
-                  <X size={16} />
-                  Cancel
-                </button>
 
+                  <X size={16} />
+
+                  Cancel
+
+                </button>
 
                 <button
                   type="submit"
                   className="user-master-save-btn"
+                  disabled={
+                    loading
+                  }
                 >
+
                   <Save size={16} />
 
-                  {editIndex !== null
+                  {loading
+                    ? "Saving..."
+                    : editId
                     ? "Update User"
                     : "Save User"}
 
@@ -998,7 +1532,6 @@ function UserMaster() {
             </form>
 
           </div>
-
 
           {/* =================================================
               PASSWORD NOTE
@@ -1019,22 +1552,25 @@ function UserMaster() {
             <div className="user-master-note-body">
 
               <p>
-                Your password should contain:
+                Password should contain:
               </p>
 
               <ul>
 
                 <li>
-                  Characters like A, a, z, etc.
+                  At least one letter
                 </li>
 
                 <li>
-                  Special characters like
-                  ! @ # $ % ^ & *
+                  At least one number
                 </li>
 
                 <li>
-                  Numbers like 1, 2, 3, etc.
+                  At least one special character
+                </li>
+
+                <li>
+                  Minimum 5 characters
                 </li>
 
               </ul>
@@ -1046,14 +1582,11 @@ function UserMaster() {
         </div>
       )}
 
-
       {/* =================================================
           USER LIST
-          ONLY FRONT PAGE
       ================================================= */}
 
       {!showForm && (
-
         <div className="user-master-card">
 
           <div className="user-master-card-header">
@@ -1070,8 +1603,9 @@ function UserMaster() {
 
           </div>
 
-
-          {/* SEARCH */}
+          {/* =================================================
+              TOOLBAR
+          ================================================= */}
 
           <div className="user-master-toolbar">
 
@@ -1081,15 +1615,16 @@ function UserMaster() {
 
               <input
                 type="text"
-                placeholder="Search User ID..."
+                placeholder="Search User ID / Name / Employee ID..."
                 value={search}
                 onChange={(e) =>
-                  setSearch(e.target.value)
+                  setSearch(
+                    e.target.value
+                  )
                 }
               />
 
               {search && (
-
                 <button
                   type="button"
                   className="user-master-search-clear"
@@ -1097,23 +1632,28 @@ function UserMaster() {
                     setSearch("")
                   }
                 >
-                  <X size={15} />
-                </button>
 
+                  <X size={15} />
+
+                </button>
               )}
 
             </div>
 
             <strong>
-              Existing system users
+              {loading
+                ? "Loading..."
+                : `${users.length} user(s)`}
             </strong>
 
           </div>
 
+          {/* =================================================
+              TABLE
+          ================================================= */}
 
-          {/* USER TABLE */}
-
-          {filteredUsers.length > 0 ? (
+          {filteredUsers.length >
+          0 ? (
 
             <div className="user-master-table-wrapper">
 
@@ -1122,91 +1662,299 @@ function UserMaster() {
                 <thead>
 
                   <tr>
-                    <th>Unit</th>
-                    <th>User ID</th>
-                    <th>Emp ID</th>
-                    <th>User Name</th>
-                    <th>Valid From</th>
-                    <th>Valid To</th>
-                    <th>Valid</th>
-                    <th>Actions</th>
+
+                    <th>
+                      User ID
+                    </th>
+
+                    <th>
+                      Unit
+                    </th>
+
+                    <th>
+                      Employee ID
+                    </th>
+
+                    <th>
+                      User Name
+                    </th>
+
+                    {/* PASSWORD */}
+
+                    <th>
+                      Password
+                    </th>
+
+                    <th>
+                      Valid From
+                    </th>
+
+                    <th>
+                      Valid To
+                    </th>
+
+                    <th>
+                      Valid
+                    </th>
+
+                    <th>
+                      Actions
+                    </th>
+
                   </tr>
 
                 </thead>
 
-
                 <tbody>
 
                   {filteredUsers.map(
-                    (user, index) => (
+                    (user) => (
 
-                      <tr key={index}>
+                      <tr
+                        key={
+                          user._id
+                        }
+                      >
+
+                        {/* USER ID */}
 
                         <td>
-                          {user.unit}
-                        </td>
 
-                        <td>
                           <strong>
-                            {user.userId}
+                            {
+                              user.userId
+                            }
                           </strong>
+
                         </td>
 
-                        <td>
-                          {user.empId}
-                        </td>
+                        {/* UNIT */}
 
                         <td>
-                          {user.userName}
+                          {
+                            user.unit
+                          }
                         </td>
 
-                        <td>
-                          {user.validFrom}
-                        </td>
+                        {/* EMPLOYEE ID */}
 
                         <td>
-                          {user.validTo}
+
+                          <strong>
+                            {
+                              user.empId
+                            }
+                          </strong>
+
                         </td>
+
+                        {/* USER NAME */}
+
+                        <td>
+                          {
+                            user.userName
+                          }
+                        </td>
+
+                        {/* =================================================
+                            PASSWORD
+                        ================================================= */}
+
+                        <td>
+
+                          {isAdmin ? (
+
+                            <div
+                              style={{
+                                display:
+                                  "flex",
+                                alignItems:
+                                  "center",
+                                gap:
+                                  "7px",
+                                minWidth:
+                                  "130px",
+                              }}
+                            >
+
+                              <span
+                                style={{
+                                  fontFamily:
+                                    visiblePasswords[
+                                      user._id
+                                    ]
+                                      ? "inherit"
+                                      : "monospace",
+                                  wordBreak:
+                                    "break-all",
+                                }}
+                              >
+                                {
+                                  getPasswordDisplay(
+                                    user
+                                  )
+                                }
+                              </span>
+
+                              {user.password && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    toggleTablePassword(
+                                      user._id
+                                    )
+                                  }
+                                  title={
+                                    visiblePasswords[
+                                      user._id
+                                    ]
+                                      ? "Hide password"
+                                      : "Show password"
+                                  }
+                                  style={{
+                                    border:
+                                      "none",
+                                    background:
+                                      "transparent",
+                                    cursor:
+                                      "pointer",
+                                    display:
+                                      "flex",
+                                    alignItems:
+                                      "center",
+                                    padding:
+                                      "3px",
+                                  }}
+                                >
+
+                                  {visiblePasswords[
+                                    user._id
+                                  ] ? (
+                                    <EyeOff
+                                      size={
+                                        16
+                                      }
+                                    />
+                                  ) : (
+                                    <Eye
+                                      size={
+                                        16
+                                      }
+                                    />
+                                  )}
+
+                                </button>
+                              )}
+
+                            </div>
+
+                          ) : (
+
+                            <strong>
+                              ********
+                            </strong>
+
+                          )}
+
+                        </td>
+
+                        {/* VALID FROM */}
+
+                        <td>
+
+                          {user.validFrom
+                            ? String(
+                                user.validFrom
+                              ).substring(
+                                0,
+                                10
+                              )
+                            : "-"}
+
+                        </td>
+
+                        {/* VALID TO */}
+
+                        <td>
+
+                          {user.validTo
+                            ? String(
+                                user.validTo
+                              ).substring(
+                                0,
+                                10
+                              )
+                            : "-"}
+
+                        </td>
+
+                        {/* VALID */}
 
                         <td>
 
                           <span
                             className={
-                              user.valid === "YES"
+                              user.valid ===
+                              "YES"
                                 ? "user-master-status active"
                                 : "user-master-status inactive"
                             }
                           >
-                            {user.valid}
+                            {
+                              user.valid
+                            }
                           </span>
 
                         </td>
+
+                        {/* ACTIONS */}
 
                         <td>
 
                           <div className="user-master-actions">
 
+                            {/* EDIT */}
+
                             <button
                               type="button"
                               className="user-master-edit-btn"
                               onClick={() =>
-                                handleEdit(index)
+                                handleEdit(
+                                  user
+                                )
                               }
-                              title="Edit"
+                              disabled={
+                                loading
+                              }
+                              title="Edit User"
                             >
-                              <Edit size={15} />
+
+                              <Edit
+                                size={15}
+                              />
+
                             </button>
 
+                            {/* DELETE */}
 
                             <button
                               type="button"
                               className="user-master-delete-btn"
                               onClick={() =>
-                                handleDelete(index)
+                                handleDelete(
+                                  user
+                                )
                               }
-                              title="Delete"
+                              disabled={
+                                loading
+                              }
+                              title="Delete User"
                             >
-                              <Trash2 size={15} />
+
+                              <Trash2
+                                size={15}
+                              />
+
                             </button>
 
                           </div>
@@ -1231,397 +1979,21 @@ function UserMaster() {
               <UserRound size={40} />
 
               <div>
-                No users available.
-              </div>
 
-              <strong>
-                Click "Add User" to create a user.
-              </strong>
+                {loading
+                  ? "Loading users..."
+                  : search
+                  ? "No matching users found."
+                  : "No users available."}
+
+              </div>
 
             </div>
 
           )}
 
         </div>
-
       )}
-
-
-      {/* =================================================
-          SECURITY SECTION
-          ALWAYS BELOW FORM / USER LIST
-      ================================================= */}
-
-      <div className="security-section">
-
-        {/* =================================================
-            TABS
-        ================================================= */}
-
-        <div className="security-tabs">
-
-          {/* ROLE DEFINE */}
-
-          <button
-            type="button"
-            className={
-              activeSecurityTab ===
-              "roleDefine"
-                ? "security-tab active"
-                : "security-tab"
-            }
-            onClick={() =>
-              setActiveSecurityTab(
-                activeSecurityTab ===
-                "roleDefine"
-                  ? null
-                  : "roleDefine"
-              )
-            }
-          >
-
-            <UserCog size={16} />
-
-            Role Define
-
-          </button>
-
-
-          {/* UNIT AUTHORIZATION */}
-
-          <button
-            type="button"
-            className={
-              activeSecurityTab ===
-              "unitAuthorization"
-                ? "security-tab active"
-                : "security-tab"
-            }
-            onClick={() =>
-              setActiveSecurityTab(
-                activeSecurityTab ===
-                "unitAuthorization"
-                  ? null
-                  : "unitAuthorization"
-              )
-            }
-          >
-
-            <TableProperties size={16} />
-
-            Unit Authorization
-
-          </button>
-
-        </div>
-
-
-        {/* =================================================
-            ROLE DEFINE
-        ================================================= */}
-
-        {activeSecurityTab ===
-          "roleDefine" && (
-
-          <div className="security-panel">
-
-            <div className="security-panel-title">
-
-              <UserCog size={18} />
-
-              <strong>
-                Assign User Role
-              </strong>
-
-            </div>
-
-
-            <div className="role-table-box">
-
-              <table className="security-data-table">
-
-                <thead>
-
-                  <tr>
-
-                    <th>
-                      User Role
-                    </th>
-
-                    <th>
-                      Role Name
-                    </th>
-
-                    <th>
-                      Action
-                    </th>
-
-                  </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                  {roles.map(
-                    (role, index) => (
-
-                      <tr key={index}>
-
-                        {/* USER ROLE */}
-
-                        <td>
-
-                          <select
-                            value={
-                              role.userRole
-                            }
-                            onChange={(e) =>
-                              handleRoleChange(
-                                index,
-                                "userRole",
-                                e.target.value
-                              )
-                            }
-                          >
-
-                            <option value="">
-                              Select Role
-                            </option>
-
-                            <option value="NONE">
-                              None
-                            </option>
-
-                            <option value="PURCHASE">
-                              Purchase
-                            </option>
-
-                            <option value="HR">
-                              HR
-                            </option>
-
-                            <option value="PRODUCTION">
-                              Production
-                            </option>
-
-                            <option value="ACCOUNT">
-                              Account
-                            </option>
-
-                            <option value="SALES">
-                              Sales
-                            </option>
-
-                            <option value="MAIN STORE">
-                              Main Store
-                            </option>
-
-                          </select>
-
-                        </td>
-
-
-                        {/* ROLE NAME */}
-
-                        <td>
-
-                          <input
-                            type="text"
-                            value={
-                              role.roleName
-                            }
-                            readOnly
-                            placeholder="Role Name"
-                          />
-
-                        </td>
-
-
-                        {/* ACTION */}
-
-                        <td>
-
-                          <div className="role-action-buttons">
-
-                            <button
-                              type="button"
-                              className="update-role-btn"
-                              onClick={() =>
-                                updateRole(index)
-                              }
-                            >
-                              UPDATE ROLE
-                            </button>
-
-
-                            <button
-                              type="button"
-                              className="remove-role-btn"
-                              onClick={() =>
-                                removeRole(index)
-                              }
-                            >
-                              Remove Role
-                            </button>
-
-                          </div>
-
-                        </td>
-
-                      </tr>
-
-                    )
-                  )}
-
-                </tbody>
-
-              </table>
-
-
-              {/* ADD ROLE */}
-
-              <button
-                type="button"
-                className="add-role-row-btn"
-                onClick={addRoleRow}
-              >
-
-                <Plus size={15} />
-
-                Add Role
-
-              </button>
-
-            </div>
-
-          </div>
-
-        )}
-
-
-        {/* =================================================
-            UNIT AUTHORIZATION
-        ================================================= */}
-
-        {activeSecurityTab ===
-          "unitAuthorization" && (
-
-          <div className="security-panel">
-
-            <div className="security-panel-title">
-
-              <Building2 size={18} />
-
-              <strong>
-                Assign Authorized Unit
-              </strong>
-
-            </div>
-
-
-            <div className="unit-table-box">
-
-              <table className="security-data-table">
-
-                <thead>
-
-                  <tr>
-
-                    <th>
-                      Unit Code
-                    </th>
-
-                    <th>
-                      Unit Name
-                    </th>
-
-                  </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                  {authorizedUnits.map(
-                    (unit, index) => (
-
-                      <tr key={index}>
-
-                        {/* UNIT CODE */}
-
-                        <td>
-
-                          <input
-                            type="text"
-                            value={
-                              unit.unitCode
-                            }
-                            onChange={(e) =>
-                              handleUnitChange(
-                                index,
-                                "unitCode",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Enter Unit Code"
-                          />
-
-                        </td>
-
-
-                        {/* UNIT NAME */}
-
-                        <td>
-
-                          <input
-                            type="text"
-                            value={
-                              unit.unitName
-                            }
-                            onChange={(e) =>
-                              handleUnitChange(
-                                index,
-                                "unitName",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Enter Unit Name"
-                          />
-
-                        </td>
-
-                      </tr>
-
-                    )
-                  )}
-
-                </tbody>
-
-              </table>
-
-
-              {/* ADD UNIT */}
-
-              <button
-                type="button"
-                className="add-role-row-btn"
-                onClick={addUnitRow}
-              >
-
-                <Plus size={15} />
-
-                Add Unit
-
-              </button>
-
-            </div>
-
-          </div>
-
-        )}
-
-      </div>
 
     </div>
   );

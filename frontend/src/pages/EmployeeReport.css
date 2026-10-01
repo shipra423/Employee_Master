@@ -1,0 +1,311 @@
+.employee-report-page {
+  min-height: 100vh;
+  padding: 18px 20px 40px;
+  background: #eef3f8;
+  box-sizing: border-box;
+}
+
+.employee-report-title {
+  text-align: center;
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  text-decoration: underline;
+}
+
+/* =========================
+   PARAMETER BOX
+========================= */
+
+.report-parameter-box {
+  width: 560px;
+  max-width: 95%;
+  margin: 0 auto;
+  padding: 18px 28px 22px;
+  box-sizing: border-box;
+
+  border: 1px solid #8997a7;
+  background: #eef3f8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.report-parameter-heading {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  margin-bottom: 18px;
+}
+
+/* =========================
+   FORM ROW
+========================= */
+
+.report-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.report-row label {
+  width: 125px;
+  font-size: 13px;
+  color: #000;
+  text-align: right;
+  margin-right: 14px;
+}
+
+.report-row select,
+.report-row input {
+  width: 270px;
+  height: 27px;
+  border: 1px solid #c5ccd5;
+  background: #fff;
+  padding: 2px 7px;
+  box-sizing: border-box;
+  font-size: 13px;
+  outline: none;
+}
+
+.report-row select:focus,
+.report-row input:focus {
+  border-color: #637b96;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.report-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.report-btn {
+  height: 32px;
+  border: 1px solid #8796a8;
+  border-radius: 4px;
+  padding: 0 11px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fff;
+}
+
+.report-btn:hover {
+  background: #e5ebf2;
+}
+
+.report-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.fetch-btn {
+  color: #17324d;
+}
+
+.excel-btn {
+  color: #176b37;
+}
+
+.clear-btn {
+  color: #333;
+}
+
+/* =========================
+   MESSAGES
+========================= */
+
+.report-message,
+.report-success,
+.report-error {
+  width: 560px;
+  max-width: 95%;
+  margin: 12px auto 0;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  font-size: 13px;
+  text-align: center;
+}
+
+.report-message {
+  background: #e7edf5;
+  border: 1px solid #b4c1d0;
+}
+
+.report-success {
+  background: #e8f5eb;
+  border: 1px solid #9bc7a5;
+  color: #1e6331;
+}
+
+.report-error {
+  background: #fdeaea;
+  border: 1px solid #e0a1a1;
+  color: #a12222;
+}
+
+/* =========================
+   REPORT RESULT
+========================= */
+
+.report-result-section {
+  margin: 24px auto 0;
+  width: 100%;
+  max-width: 1500px;
+  background: #fff;
+  border: 1px solid #aab5c2;
+}
+
+.report-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #e2e8f0;
+  border-bottom: 1px solid #aab5c2;
+}
+
+.report-result-header h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #000;
+}
+
+/* =========================
+   BOTTOM EXCEL BUTTON
+========================= */
+
+.bottom-excel-btn {
+  height: 32px;
+  padding: 0 12px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  border: 1px solid #66806e;
+  border-radius: 4px;
+  background: #edf7ef;
+  color: #185b2e;
+
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bottom-excel-btn:hover {
+  background: #dcefe0;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.report-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1400px;
+  font-size: 12px;
+}
+
+.report-table th {
+  background: #d7e0ea;
+  color: #000;
+  font-weight: 600;
+  padding: 8px 7px;
+  border: 1px solid #aab5c2;
+  white-space: nowrap;
+}
+
+.report-table td {
+  padding: 7px;
+  border: 1px solid #c1c9d2;
+  white-space: nowrap;
+  color: #000;
+}
+
+.report-table tbody tr:nth-child(even) {
+  background: #f6f8fa;
+}
+
+.report-table tbody tr:hover {
+  background: #edf2f7;
+}
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+.report-back-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.report-back-btn {
+  height: 32px;
+  padding: 0 15px;
+  border: 1px solid #8997a7;
+  border-radius: 4px;
+  background: #dbe3ec;
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.report-back-btn:hover {
+  background: #cbd6e2;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+  .report-parameter-box {
+    padding: 16px;
+  }
+
+  .report-row {
+    display: block;
+  }
+
+  .report-row label {
+    display: block;
+    width: auto;
+    text-align: left;
+    margin: 0 0 4px;
+  }
+
+  .report-row select,
+  .report-row input {
+    width: 100%;
+  }
+
+  .report-buttons {
+    flex-wrap: wrap;
+  }
+
+  .report-result-header {
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

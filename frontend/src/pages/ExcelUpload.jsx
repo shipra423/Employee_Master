@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 import {
@@ -10,9 +9,9 @@ import {
 } from "lucide-react";
 
 function ExcelUpload() {
-  // ==========================================
+  // =====================================================
   // STATES
-  // ==========================================
+  // =====================================================
 
   const [selectedFile, setSelectedFile] =
     useState(null);
@@ -29,19 +28,29 @@ function ExcelUpload() {
   const [uploadResult, setUploadResult] =
     useState(null);
 
-  // ==========================================
-  // API URL
-  // ==========================================
+  const [excelRows, setExcelRows] =
+    useState([]);
+
+  const [masterHeaders, setMasterHeaders] =
+    useState([]);
+
+  const [extraHeaders, setExtraHeaders] =
+    useState([]);
+
+  // =====================================================
+  // API
+  // =====================================================
 
   const API_URL =
     "http://localhost:5000/api/excel-upload";
 
-  // ==========================================
+  // =====================================================
   // FILE SELECT
-  // ==========================================
+  // =====================================================
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file =
+      e.target.files[0];
 
     setMessage("");
     setError("");
@@ -61,28 +70,32 @@ function ExcelUpload() {
       ".csv",
     ];
 
-    const isValidFile =
-      allowedExtensions.some((extension) =>
-        fileName.endsWith(extension)
+    const valid =
+      allowedExtensions.some(
+        (extension) =>
+          fileName.endsWith(
+            extension
+          )
       );
 
-    if (!isValidFile) {
+    if (!valid) {
       setSelectedFile(null);
 
       setError(
-        "Only Excel (.xlsx, .xls) or CSV (.csv) files are allowed."
+        "Only Excel (.xlsx, .xls) or CSV files are allowed."
       );
 
       e.target.value = "";
+
       return;
     }
 
     setSelectedFile(file);
   };
 
-  // ==========================================
+  // =====================================================
   // UPLOAD
-  // ==========================================
+  // =====================================================
 
   const handleUpload = async () => {
     setMessage("");
@@ -93,6 +106,7 @@ function ExcelUpload() {
       setError(
         "Please select an Excel or CSV file first."
       );
+
       return;
     }
 
@@ -108,10 +122,13 @@ function ExcelUpload() {
       );
 
       const response =
-        await fetch(API_URL, {
-          method: "POST",
-          body: formData,
-        });
+        await fetch(
+          API_URL,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
       const data =
         await response.json();
@@ -123,15 +140,42 @@ function ExcelUpload() {
         );
       }
 
+      // =================================================
+      // SAVE RESPONSE
+      // =================================================
+
       setMessage(
         "Employee data uploaded successfully!"
       );
 
       setUploadResult(data);
 
+      // IMPORTANT:
+      // COMPLETE EXCEL DATA
+      setExcelRows(
+        Array.isArray(data.rows)
+          ? data.rows
+          : []
+      );
+
+      setMasterHeaders(
+        Array.isArray(
+          data.masterHeaders
+        )
+          ? data.masterHeaders
+          : []
+      );
+
+      setExtraHeaders(
+        Array.isArray(
+          data.extraHeaders
+        )
+          ? data.extraHeaders
+          : []
+      );
+
       setSelectedFile(null);
 
-      // Reset file input
       const fileInput =
         document.getElementById(
           "employee-file-input"
@@ -140,9 +184,10 @@ function ExcelUpload() {
       if (fileInput) {
         fileInput.value = "";
       }
+
     } catch (err) {
       console.error(
-        "Excel upload error:",
+        "Excel Upload Error:",
         err
       );
 
@@ -155,15 +200,19 @@ function ExcelUpload() {
     }
   };
 
-  // ==========================================
+  // =====================================================
   // CLEAR
-  // ==========================================
+  // =====================================================
 
   const handleClear = () => {
     setSelectedFile(null);
     setMessage("");
     setError("");
     setUploadResult(null);
+
+    setExcelRows([]);
+    setMasterHeaders([]);
+    setExtraHeaders([]);
 
     const fileInput =
       document.getElementById(
@@ -175,16 +224,38 @@ function ExcelUpload() {
     }
   };
 
-  // ==========================================
+  // =====================================================
+  // FORMAT VALUE
+  // =====================================================
+
+  const displayValue = (value) => {
+    if (
+      value === undefined ||
+      value === null ||
+      value === ""
+    ) {
+      return "-";
+    }
+
+    if (value instanceof Date) {
+      return value.toLocaleDateString(
+        "en-IN"
+      );
+    }
+
+    return String(value);
+  };
+
+  // =====================================================
   // UI
-  // ==========================================
+  // =====================================================
 
   return (
     <div className="employee-page">
 
-      {/* ======================================
+      {/* =================================================
           HEADER
-      ====================================== */}
+      ================================================= */}
 
       <div className="page-header">
 
@@ -205,9 +276,9 @@ function ExcelUpload() {
 
       </div>
 
-      {/* ======================================
+      {/* =================================================
           UPLOAD CARD
-      ====================================== */}
+      ================================================= */}
 
       <div className="form-card">
 
@@ -232,9 +303,9 @@ function ExcelUpload() {
 
         </div>
 
-        {/* ====================================
+        {/* =================================================
             UPLOAD BOX
-        ==================================== */}
+        ================================================= */}
 
         <div className="excel-upload-box">
 
@@ -262,12 +333,11 @@ function ExcelUpload() {
 
         </div>
 
-        {/* ====================================
+        {/* =================================================
             SELECTED FILE
-        ==================================== */}
+        ================================================= */}
 
         {selectedFile && (
-
           <div className="success-message">
 
             <FileSpreadsheet
@@ -281,15 +351,13 @@ function ExcelUpload() {
             </strong>
 
           </div>
-
         )}
 
-        {/* ====================================
+        {/* =================================================
             SUCCESS
-        ==================================== */}
+        ================================================= */}
 
         {message && (
-
           <div className="success-message">
 
             <CheckCircle
@@ -299,15 +367,13 @@ function ExcelUpload() {
             {message}
 
           </div>
-
         )}
 
-        {/* ====================================
+        {/* =================================================
             ERROR
-        ==================================== */}
+        ================================================= */}
 
         {error && (
-
           <div className="error-message">
 
             <AlertCircle
@@ -317,15 +383,13 @@ function ExcelUpload() {
             {error}
 
           </div>
-
         )}
 
-        {/* ====================================
-            UPLOAD RESULT
-        ==================================== */}
+        {/* =================================================
+            UPLOAD SUMMARY
+        ================================================= */}
 
         {uploadResult && (
-
           <div className="form-card">
 
             <div className="section-title">
@@ -400,12 +464,11 @@ function ExcelUpload() {
             </div>
 
           </div>
-
         )}
 
-        {/* ====================================
+        {/* =================================================
             BUTTONS
-        ==================================== */}
+        ================================================= */}
 
         <div className="form-actions">
 
@@ -447,9 +510,156 @@ function ExcelUpload() {
 
       </div>
 
+      {/* =================================================
+          COMPLETE EXCEL DATA
+      ================================================= */}
+
+      {excelRows.length > 0 && (
+
+        <div className="form-card">
+
+          <div className="section-title">
+
+            <FileSpreadsheet
+              size={21}
+            />
+
+            <div>
+
+              <h2>
+                Uploaded Employee Data
+              </h2>
+
+              <p>
+                Complete data from uploaded
+                Excel file
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* =================================================
+              TABLE
+          ================================================= */}
+
+          <div
+            className="employee-results-table"
+            style={{
+              overflowX: "auto",
+              width: "100%",
+            }}
+          >
+
+            <table
+              style={{
+                minWidth: "max-content",
+                width: "100%",
+              }}
+            >
+
+              <thead>
+
+                <tr>
+
+                  {/* EMPLOYEE MASTER COLUMNS */}
+
+                  {masterHeaders.map(
+                    (item) => (
+                      <th
+                        key={
+                          item.field
+                        }
+                      >
+                        {item.header}
+                      </th>
+                    )
+                  )}
+
+                  {/* EXTRA EXCEL COLUMNS */}
+
+                  {extraHeaders.map(
+                    (header) => (
+                      <th
+                        key={header}
+                      >
+                        {header}
+                      </th>
+                    )
+                  )}
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {excelRows.map(
+                  (row, rowIndex) => (
+
+                    <tr
+                      key={rowIndex}
+                    >
+
+                      {/* MASTER DATA */}
+
+                      {masterHeaders.map(
+                        (item) => {
+
+                          const value =
+                            row[
+                              item.header
+                            ];
+
+                          return (
+                            <td
+                              key={
+                                item.field
+                              }
+                            >
+                              {displayValue(
+                                value
+                              )}
+                            </td>
+                          );
+                        }
+                      )}
+
+                      {/* EXTRA EXCEL DATA */}
+
+                      {extraHeaders.map(
+                        (header) => (
+
+                          <td
+                            key={header}
+                          >
+                            {displayValue(
+                              row[
+                                header
+                              ]
+                            )}
+                          </td>
+
+                        )
+                      )}
+
+                    </tr>
+
+                  )
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      )}
+
     </div>
   );
 }
 
 export default ExcelUpload;
-
