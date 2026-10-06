@@ -61,10 +61,6 @@ router.get("/test", (req, res) => {
 
 // =====================================================
 // GET EMPLOYEES AVAILABLE FOR USER MASTER
-//
-// IMPORTANT:
-// Already used Employee IDs are NOT returned.
-//
 // GET /api/users/employees
 // =====================================================
 
@@ -72,7 +68,6 @@ router.get("/employees", async (req, res) => {
   try {
     console.log("GET AVAILABLE EMPLOYEES");
 
-    // Existing employee IDs in User Master
     const usedUsers = await User.find({})
       .select("empId")
       .lean();
@@ -83,7 +78,6 @@ router.get("/employees", async (req, res) => {
       )
       .filter(Boolean);
 
-    // Employee Master
     const query = {
       employeeCode: {
         $exists: true,
@@ -91,7 +85,6 @@ router.get("/employees", async (req, res) => {
       },
     };
 
-    // Hide already-used employee IDs
     if (usedEmployeeIds.length > 0) {
       query.employeeCode = {
         $exists: true,
@@ -248,12 +241,29 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const cleanUnit =
-      String(unit).trim();
+    const cleanUnit = String(unit).trim();
+    const cleanEmpId = String(empId).trim();
+     const cleanUserName = String(userName || "").trim();
 
-    const cleanEmpId =
-      String(empId).trim();
+if (!cleanUserName) {
+  return res.status(400).json({
+    message: "User Name is required",
+  });
+}
 
+const existingUserName = await User.findOne({
+  userName: {
+    $regex: `^${cleanUserName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+    $options: "i",
+  },
+  ...(req.body._id ? { _id: { $ne: req.body._id } } : {}),
+});
+
+if (existingUserName) {
+  return res.status(400).json({
+    message: "User Name already exists",
+  });
+}
     // =================================================
     // PASSWORD VALIDATION
     // =================================================
@@ -283,7 +293,6 @@ router.post("/", async (req, res) => {
 
     // =================================================
     // CHECK EMPLOYEE ALREADY HAS USER
-    // BEFORE SAVE
     // =================================================
 
     const existingEmployeeUser =
@@ -679,27 +688,25 @@ router.post("/login", async (req, res) => {
     // NORMAL USER
     // =================================================
 
-    const user =
-      await User.findOne({
-        userId: cleanUserId,
-      });
+const loginValue = String(userId).trim();
 
-    if (!user) {
-      return res.status(401).json({
-        message:
-          "Invalid User ID or password.",
-      });
-    }
+const escapedLoginValue = loginValue.replace(
+  /[.*+?^${}()|[\]\\]/g,
+  "\\$&"
+);
 
-    if (
-      user.valid !== "YES"
-    ) {
-      return res.status(403).json({
-        message:
-          "This user account is inactive.",
-      });
-    }
-
+const user = await User.findOne({
+  $or: [
+    { userId: loginValue },
+    {
+      userName: {
+        $regex: `^${escapedLoginValue}$`,
+        $options: "i",
+      },
+    },
+  ],
+});
+     
     // =================================================
     // VALID FROM
     // =================================================

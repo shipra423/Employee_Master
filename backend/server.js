@@ -14,6 +14,7 @@ const unitRoute = require("./routes/unitRoute");
 const departmentRoute = require("./routes/departmentRoute");
 const contractorRoute = require("./routes/contractorRoute");
 const designationRoute = require("./routes/designationRoute");
+const shiftRoute = require("./routes/shiftRoute");
 
 const userRoutes = require("./routes/userRoutes");
 const excelUploadRoutes = require("./routes/excelUploadRoutes");
@@ -135,6 +136,7 @@ app.use(
   "/api/designations",
   designationRoute
 );
+app.use("/api/shifts", shiftRoute);
 
 // USERS
 app.use(

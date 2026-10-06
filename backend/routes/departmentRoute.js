@@ -217,7 +217,7 @@ router.put("/:id", async (req, res) => {
 
     // -----------------------------------------------
     // DUPLICATE CHECK
-    // Same code kisi aur department ka nahi hona chahiye
+    
     // -----------------------------------------------
 
     const duplicate =
