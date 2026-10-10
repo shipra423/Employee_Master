@@ -17,6 +17,7 @@ const designationRoute = require("./routes/designationRoute");
 const shiftRoute = require("./routes/shiftRoute");
 
 const userRoutes = require("./routes/userRoutes");
+const userRightsRoutes = require("./routes/userRightsRoutes");
 const excelUploadRoutes = require("./routes/excelUploadRoutes");
 
 const bankDetailRoutes =
@@ -136,6 +137,8 @@ app.use(
   "/api/designations",
   designationRoute
 );
+
+// SHIFT
 app.use("/api/shifts", shiftRoute);
 
 // USERS
@@ -143,6 +146,9 @@ app.use(
   "/api/users",
   userRoutes
 );
+
+// USER RIGHTS
+app.use("/api/user-rights", userRightsRoutes);
 
 // EXCEL UPLOAD
 app.use(

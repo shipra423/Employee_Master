@@ -580,3 +580,68 @@
     min-width: 900px;
   }
 }
+/* =====================================================
+   USER DROPDOWN
+===================================================== */
+
+.ur-user-select {
+  width: 395px;
+  height: 28px;
+  border: 1px solid #aeb8c5;
+  border-radius: 3px;
+  padding: 0 7px;
+  font-size: 12px;
+  box-sizing: border-box;
+  outline: none;
+  background: white;
+  cursor: pointer;
+}
+
+.ur-user-select:focus {
+  border-color: #3157b7;
+}
+
+/* =====================================================
+   SAVE BUTTON
+===================================================== */
+
+.ur-btn-save {
+  background: #16803c;
+  color: white;
+}
+
+.ur-btn-save:disabled,
+.ur-btn-add:disabled,
+.ur-bottom-add:disabled,
+.ur-edit-action:disabled,
+.ur-delete-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   DISABLED TABLE INPUTS
+===================================================== */
+
+.ur-table input:disabled {
+  background: #edf1f5;
+  color: #555;
+  cursor: not-allowed;
+}
+
+.ur-table input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   COPY USER SELECT
+===================================================== */
+
+.ur-copy-group select {
+  outline: none;
+  cursor: pointer;
+}
+
+.ur-copy-group select:focus {
+  border-color: #3157b7;
+}

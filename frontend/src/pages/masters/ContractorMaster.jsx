@@ -9,7 +9,7 @@ import {
   RotateCcw,
   X,
   AlertCircle,
-  Trash2,
+  
   Edit,
 } from "lucide-react";
 
@@ -305,55 +305,7 @@ function ContractorMaster() {
   // DELETE
   // =====================================================
 
-  const handleDelete = async (id) => {
-    const confirmDelete =
-      window.confirm(
-        "Are you sure you want to delete this contractor?"
-      );
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    try {
-      setMessage("");
-      setError("");
-
-      await axios.delete(
-        `${API_URL}/${id}`
-      );
-
-      setMessage(
-        "Contractor deleted successfully!"
-      );
-
-      if (editingId === id) {
-        setFormData(emptyForm);
-        setEditingId(null);
-      }
-
-      await fetchContractors();
-
-    } catch (err) {
-      console.error(
-        "Delete contractor error:",
-        err
-      );
-
-      if (
-        err.response?.data?.message
-      ) {
-        setError(
-          err.response.data.message
-        );
-      } else {
-        setError(
-          "Failed to delete contractor."
-        );
-      }
-    }
-  };
-
+ 
   // =====================================================
   // SEARCH
   // =====================================================
@@ -809,20 +761,7 @@ function ContractorMaster() {
                           <Edit size={16} />
                         </button>
 
-                        <button
-                          type="button"
-                          className="delete-btn"
-                          title="Delete"
-                          onClick={(e) => {
-                            e.stopPropagation();
-
-                            handleDelete(
-                              contractor._id
-                            );
-                          }}
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                       
 
                       </td>
 

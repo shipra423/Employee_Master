@@ -9,7 +9,7 @@ import {
   RotateCcw,
   X,
   AlertCircle,
-  Trash2,
+  
   Pencil,
 } from "lucide-react";
 
@@ -287,52 +287,7 @@ function UnitMaster() {
   // DELETE
   // =====================================================
 
-  const handleDelete = async (e, id) => {
-    // Prevent row click
-    e.stopPropagation();
-
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this unit?"
-    );
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    try {
-      setMessage("");
-
-      setError("");
-
-      await axios.delete(`${API_URL}/${id}`);
-
-      setMessage("Unit deleted successfully!");
-
-      // If deleted record was being edited
-      if (editingId === id) {
-        setFormData(emptyForm);
-
-        setEditingId(null);
-
-        setShowForm(false);
-      }
-
-      await fetchUnits();
-
-      setTimeout(() => {
-        setMessage("");
-      }, 1500);
-    } catch (err) {
-      console.error("Delete unit error:", err);
-
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Failed to delete unit.");
-      }
-    }
-  };
-
+  
   // =====================================================
   // SEARCH
   // =====================================================
@@ -829,19 +784,7 @@ function UnitMaster() {
 
                       {/* DELETE */}
 
-                      <button
-                        type="button"
-                        className="delete-btn"
-                        title="Delete Unit"
-                        onClick={(e) =>
-                          handleDelete(
-                            e,
-                            unit._id
-                          )
-                        }
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      
 
                     </td>
 

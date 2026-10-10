@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
 
 import {
   Search,
@@ -6,6 +7,8 @@ import {
   RotateCcw,
   Edit,
   UserRound,
+  Download,
+  Upload,
 } from "lucide-react";
 
 const API_URL = "http://localhost:5000/api/bank-details";
@@ -44,6 +47,52 @@ const getInputDate = (date) => {
   const day = String(d.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+};
+
+// =====================================================
+// EXCEL HELPERS (NEW)
+// =====================================================
+
+const excelHeaders = [
+  "employeeCode",
+  "bankAcNo",
+  "ifscCode",
+  "pfNumber",
+  "pfMembershipDate",
+  "esiNumber",
+  "esiMembershipDate",
+  "panNo",
+  "pfApplicable",
+  "esiApplicable",
+  "bonusApplicable",
+  "fpf",
+];
+
+const toBool = (v) =>
+  ["yes", "y", "true", "1"].includes(
+    String(v ?? "").trim().toLowerCase()
+  );
+
+const toYesNo = (v) => (v ? "Yes" : "No");
+
+const excelDateToInput = (v) => {
+  if (!v) return "";
+
+  if (v instanceof Date) {
+    if (isNaN(v.getTime())) return "";
+    return new Date(
+      v.getTime() - v.getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .slice(0, 10);
+  }
+
+  const str = String(v).trim();
+  const m = str.match(/^(\d{2})[-/](\d{2})[-/](\d{4})$/);
+
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`; // dd-mm-yyyy
+
+  return getInputDate(str);
 };
 
 function BankDetail({
@@ -483,6 +532,140 @@ function BankDetail({
     });
   };
 
+  // =====================================================
+  // EXCEL DOWNLOAD / TEMPLATE / UPLOAD (NEW)
+  // =====================================================
+
+  const handleDownloadExcel = () => {
+    const rows = records.map((item) => ({
+      employeeCode: item.employeeCode || "",
+      bankAcNo: item.bankAcNo || "",
+      ifscCode: item.ifscCode || "",
+      pfNumber: item.pfNumber || "",
+      pfMembershipDate: getInputDate(item.pfMembershipDate),
+      esiNumber: item.esiNumber || "",
+      esiMembershipDate: getInputDate(item.esiMembershipDate),
+      panNo: item.panNo || "",
+      pfApplicable: toYesNo(item.pfApplicable),
+      esiApplicable: toYesNo(item.esiApplicable),
+      bonusApplicable: toYesNo(item.bonusApplicable),
+      fpf: toYesNo(item.fpf),
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows, {
+      header: excelHeaders,
+    });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "BankDetail");
+    XLSX.writeFile(wb, "BankDetails.xlsx");
+  };
+
+  const handleDownloadTemplate = () => {
+    const ws = XLSX.utils.json_to_sheet([], {
+      header: excelHeaders,
+    });
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "BankDetail");
+    XLSX.writeFile(wb, "BankDetail_Template.xlsx");
+  };
+
+  const handleUploadExcel = async (e) => {
+    const file = e.target.files[0];
+    e.target.value = ""; // same file dobara select ho sake
+
+    if (!file) return;
+
+    setMessage("");
+    setError("");
+
+    try {
+      setLoading(true);
+
+      const wb = XLSX.read(await file.arrayBuffer(), {
+        cellDates: true,
+      });
+
+      const rows = XLSX.utils.sheet_to_json(
+        wb.Sheets[wb.SheetNames[0]],
+        { defval: "" }
+      );
+
+      if (rows.length === 0) {
+        setError("Excel file is empty.");
+        return;
+      }
+
+      let success = 0;
+      const failed = [];
+
+      for (let i = 0; i < rows.length; i++) {
+        const r = rows[i];
+        const code = String(r.employeeCode ?? "").trim();
+
+        if (!code) {
+          failed.push(`Row ${i + 2}: employeeCode missing`);
+          continue;
+        }
+
+        const payload = {
+          employeeCode: code,
+          bankAcNo: String(r.bankAcNo ?? "").trim(),
+          ifscCode: String(r.ifscCode ?? "").trim().toUpperCase(),
+          pfNumber: String(r.pfNumber ?? "").trim(),
+          pfMembershipDate: excelDateToInput(r.pfMembershipDate),
+          esiNumber: String(r.esiNumber ?? "").trim(),
+          esiMembershipDate: excelDateToInput(r.esiMembershipDate),
+          panNo: String(r.panNo ?? "").trim().toUpperCase(),
+          pfApplicable: toBool(r.pfApplicable),
+          esiApplicable: toBool(r.esiApplicable),
+          bonusApplicable: toBool(r.bonusApplicable),
+          fpf: toBool(r.fpf),
+        };
+
+        const existing = records.find(
+          (x) => x.employeeCode === code
+        );
+
+        try {
+          const response = await fetch(
+            existing ? `${API_URL}/${existing._id}` : API_URL,
+            {
+              method: existing ? "PUT" : "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            }
+          );
+
+          if (!response.ok) {
+            const d = await response.json().catch(() => ({}));
+            throw new Error(d.message || "Save failed");
+          }
+
+          success++;
+        } catch (rowErr) {
+          failed.push(`Row ${i + 2} (${code}): ${rowErr.message}`);
+        }
+      }
+
+      await loadRecords();
+
+      if (formData.employeeCode) {
+        await loadEmployeeBankDetail(formData.employeeCode);
+      }
+
+      setMessage(`Excel upload done. ${success} saved, ${failed.length} failed.`);
+
+      if (failed.length > 0) {
+        setError(failed.slice(0, 5).join(" | "));
+      }
+    } catch (err) {
+      console.error("Excel Upload Error:", err);
+      setError("Invalid Excel file.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bank-detail-page">
 
@@ -776,6 +959,37 @@ function BankDetail({
         {/* BUTTONS */}
 
         <div className="form-actions">
+
+          {/* EXCEL BUTTONS (NEW) */}
+
+          <button
+            type="button"
+            className="clear-btn"
+            onClick={handleDownloadTemplate}
+          >
+            <Download size={17} />
+            Template
+          </button>
+
+          <button
+            type="button"
+            className="clear-btn"
+            onClick={handleDownloadExcel}
+          >
+            <Download size={17} />
+            Export
+          </button>
+
+          <label className="clear-btn" style={{ cursor: "pointer" }}>
+            <Upload size={17} />
+            Upload
+            <input
+              type="file"
+              accept=".xlsx,.xls,.csv"
+              hidden
+              onChange={handleUploadExcel}
+            />
+          </label>
 
           <button
             type="button"

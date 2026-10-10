@@ -1,0 +1,301 @@
+.sp-page { padding: 24px 28px; }
+.sp-title { margin: 0 0 16px; font-size: 24px; }
+
+.sp-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.sp-card-title { font-weight: 700; margin-bottom: 10px; }
+
+.sp-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.sp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sp-field select,
+.sp-field input {
+  padding: 8px 10px;
+  border: 1px solid #c5ced9;
+  border-radius: 6px;
+  font-size: 13px;
+  min-width: 160px;
+}
+
+.sp-btn {
+  padding: 9px 16px;
+  border: 1px solid #1f5fa8;
+  border-radius: 6px;
+  background: #1f5fa8;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.sp-btn-light { background: #fff; color: #1f5fa8; }
+.sp-btn-green { background: #1c8a4a; border-color: #1c8a4a; }
+
+.sp-message {
+  padding: 10px 14px;
+  background: #eef2f7;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.sp-note {
+  font-size: 12px;
+  color: #5b6676;
+  margin: 8px 0 12px;
+}
+
+.sp-badge {
+  margin-left: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f5fa8;
+}
+
+.sp-cards { display: flex; gap: 12px; margin-bottom: 16px; }
+
+.sp-kpi {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.sp-kpi small { display: block; font-size: 12px; color: #5b6676; }
+.sp-kpi b { font-size: 21px; }
+
+.sp-table-wrap { overflow-x: auto; }
+.sp-table { width: 100%; border-collapse: collapse; }
+
+.sp-table th {
+  background: #eef2f7;
+  text-align: left;
+  padding: 9px 10px;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.sp-table td {
+  padding: 9px 10px;
+  font-size: 13px;
+  border-bottom: 1px solid #e6ebf1;
+  white-space: nowrap;
+}
+
+.sp-table select {
+  padding: 6px 8px;
+  border: 1px solid #c5ced9;
+  border-radius: 6px;
+  font-size: 13px;
+  min-width: 220px;
+}
+
+.sp-table .r { text-align: right; }
+.sp-row-error td { background: #fdeaea; color: #a12020; }
+.sp-total td { font-weight: 700; background: #f3f6fa; }
+
+/* ---------- COLUMN PICKER (Salary Statement) ---------- */
+
+.sp-cols-panel {
+  border: 1px solid #d5dce6;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #f9fbfd;
+}
+
+.sp-cols-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.sp-chip {
+  padding: 5px 12px;
+  border: 1px solid #1f5fa8;
+  border-radius: 16px;
+  background: #fff;
+  color: #1f5fa8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sp-chip:hover { background: #e8f0fb; }
+
+.sp-cols-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 6px 14px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.sp-col-item {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+}
+/* ---------- SALARY STATEMENT: SCROLL AUR CHIPKI HUI ROWS / COLUMNS ---------- */
+
+.sp-top-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 18px;
+  background: #f3f6fa;
+  border-bottom: 1px solid #d5dce6;
+}
+
+.sp-scroll {
+  overflow: auto;
+  max-height: 70vh;
+}
+
+/* Heading row upar chipki rahegi */
+.sp-scroll .sp-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Emp Code aur Name left mein chipke rahenge */
+.sp-scroll .sp-s1,
+.sp-scroll .sp-s2 {
+  position: sticky;
+  background: #fff;
+  z-index: 1;
+}
+
+.sp-scroll .sp-s1 {
+  left: 0;
+  min-width: 120px;
+}
+
+.sp-scroll .sp-s2 {
+  left: 120px;
+  min-width: 190px;
+  box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.15);
+}
+
+/* Heading wale corner cells sabse upar rahenge */
+.sp-scroll th.sp-s1,
+.sp-scroll th.sp-s2 {
+  background: #eef2f7;
+  z-index: 4;
+}
+
+/* Total row neeche chipki rahegi */
+.sp-scroll .sp-total td {
+  position: sticky;
+  bottom: 0;
+  background: #f3f6fa;
+  z-index: 2;
+}
+
+.sp-scroll .sp-total td.sp-s1 {
+  left: 0;
+  z-index: 3;
+  background: #f3f6fa;
+}
+/* ---------- SUMMARY CARDS (compact) ---------- */
+
+.sp-cards {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: stretch;
+}
+
+.sp-cards .sp-kpi {
+  flex: 1;
+  min-width: 0;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sp-cards .sp-kpi-emp {
+  flex: 1.3;
+}
+
+.sp-cards .sp-kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b6676;
+  line-height: 1.3;
+}
+
+.sp-cards .sp-kpi-value {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1b3f77;
+  line-height: 1.3;
+}
+
+/* Total ke neeche line, uske neeche Active | Inactive */
+.sp-cards .sp-kpi-split {
+  display: flex;
+  margin-top: 6px;
+  border-top: 1px solid #b8c2d0;
+}
+
+.sp-cards .sp-split-half {
+  flex: 1;
+  padding-top: 6px;
+  text-align: center;
+}
+
+/* Active aur Inactive ke beech seedhi line */
+.sp-cards .sp-split-half + .sp-split-half {
+  border-left: 1px solid #b8c2d0;
+}
+
+.sp-cards .sp-split-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #5b6676;
+  line-height: 1.3;
+}
+
+.sp-cards .sp-split-num {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sp-cards .sp-num-active { color: #1c8a4a; }
+.sp-cards .sp-num-inactive { color: #a12020; }
+
+.sp-cards .sp-kpi-basis {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 400;
+  font-style: normal;
+  color: #8a94a3;
+  line-height: 1.2;
+}

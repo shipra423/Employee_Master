@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { Trash2 } from "lucide-react";
 import {
   UserRound,
   Building2,
@@ -54,6 +54,7 @@ const BACKEND_URL =
 function EmployeeMaster({
   onBankDetail,
   onQualification,
+    onEmployeeSelect,
 }) {
 
   // =====================================================
@@ -1589,6 +1590,20 @@ function EmployeeMaster({
       setFormData(
         newFormData
       );
+      const code = String(
+  employee.employeeCode || ""
+).trim();
+
+if (code) {
+  localStorage.setItem(
+    "selectedEmployeeCode",
+    code
+  );
+
+  if (onEmployeeSelect) {
+    onEmployeeSelect(code);
+  }
+}
 
 
       setEditingId(
@@ -1789,22 +1804,16 @@ function EmployeeMaster({
 
         </div>
 
-
-        <button
-          type="button"
-          className="add-employee-btn"
-          onClick={
-            handleAdd
-          }
-        >
-
-          <Plus
-            size={18}
-          />
-
-          Add Employee
-
-        </button>
+    {employees.length > 0 && (
+     <button
+    type="button"
+    className="add-employee-btn"
+    onClick={handleAdd}
+      >
+    <Plus size={18} />
+    Add Employee
+    </button>
+    )}
 
       </div>
 
@@ -2890,7 +2899,36 @@ function EmployeeMaster({
 
             </label>
 
-
+              
+<button
+  type="button"
+  onClick={() => {
+    setPhotoFile(null);
+    setPhotoPreview("");
+    setPhotoUrl("");
+    const input = document.getElementById("employee-photo-input");
+    if (input) input.value = "";
+  }}
+  style={{
+    width: "100%",
+    height: "30px",
+    background: "#fff",
+    color: "#dc2626",
+    border: "1px solid #fecaca",
+    borderRadius: "5px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    fontSize: "12px",
+    fontWeight: 600,
+    cursor: "pointer",
+    boxSizing: "border-box",
+  }}
+>
+  <Trash2 size={15} />
+  Remove Photo
+</button>
             {/* =================================================
                 DOCUMENTS DROPDOWN
             ================================================= */}

@@ -18,9 +18,9 @@
   background:
     linear-gradient(
       135deg,
-      #ad58ad 0%,
-      #b87ba0 50%,
-      #aa5e7e 100%
+      #ebebf1 0%,
+      #030c24 50%,
+      #bcb5d6 100%
     );
 
   overflow-y: auto;
@@ -35,7 +35,7 @@
   width: 440px;
   max-width: 100%;
 
-  background: #f5f2f2;
+  background: #e9dfdf;
 
   border-radius: 18px;
 

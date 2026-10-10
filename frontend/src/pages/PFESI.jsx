@@ -11,7 +11,7 @@ import {
   Save,
   RotateCcw,
   Search,
-  Trash2,
+  
   Pencil,
   X,
 } from "lucide-react";
@@ -409,42 +409,7 @@ function PFESI() {
   // DELETE
   // =====================================================
 
-  const handleDelete = async (id) => {
-    const confirmDelete =
-      window.confirm(
-        "Are you sure you want to delete this salary record?"
-      );
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    try {
-      setMessage("");
-      setError("");
-
-      await axios.delete(
-        `${API_URL}/${id}`
-      );
-
-      setMessage(
-        "Salary record deleted successfully."
-      );
-
-      await fetchRecords();
-    } catch (err) {
-      console.error(
-        "DELETE SALARY ERROR:",
-        err
-      );
-
-      setError(
-        err.response?.data?.message ||
-          "Failed to delete salary record."
-      );
-    }
-  };
-
+  
   // =====================================================
   // SEARCH
   // =====================================================
@@ -1221,22 +1186,7 @@ function PFESI() {
                             size={16}
                           />
 
-                        </button>
-
-                        <button
-                          type="button"
-                          className="delete-btn"
-                          title="Delete Employee"
-                          onClick={() =>
-                            handleDelete(
-                              record._id
-                            )
-                          }
-                        >
-
-                          <Trash2
-                            size={17}
-                          />
+                       
 
                         </button>
 

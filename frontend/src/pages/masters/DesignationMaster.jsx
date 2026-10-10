@@ -9,7 +9,7 @@ import {
   RotateCcw,
   X,
   AlertCircle,
-  Trash2,
+  
   Edit,
 } from "lucide-react";
 
@@ -245,48 +245,7 @@ function DesignationMaster() {
   // DELETE
   // =====================================================
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this designation?"
-    );
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    try {
-      setError("");
-      setMessage("");
-
-      await axios.delete(`${API_URL}/${id}`);
-
-      setMessage(
-        "Designation deleted successfully!"
-      );
-
-      // If deleted record was being edited
-      if (editingId === id) {
-        setFormData(emptyForm);
-        setEditingId(null);
-      }
-
-      await fetchDesignations();
-
-    } catch (err) {
-      console.error(
-        "Delete designation error:",
-        err
-      );
-
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError(
-          "Failed to delete designation."
-        );
-      }
-    }
-  };
+ 
 
   // =====================================================
   // SEARCH
@@ -743,20 +702,7 @@ function DesignationMaster() {
                           <Edit size={16} />
                         </button>
 
-                        <button
-                          type="button"
-                          className="delete-btn"
-                          title="Delete"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(
-                              designation._id
-                            );
-                          }}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-
+                       
                       </td>
 
                     </tr>

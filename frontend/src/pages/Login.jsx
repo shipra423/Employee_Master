@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+
 import {
   User,
   Lock,
@@ -1126,7 +1127,7 @@ function Login({ onLogin }) {
 
               <input
                 type="text"
-                placeholder="Enter User ID"
+                placeholder="Enter User Name or User ID"
                 value={
                   username
                 }

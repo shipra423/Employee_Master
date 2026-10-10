@@ -9,7 +9,7 @@ import {
   RotateCcw,
   X,
   AlertCircle,
-  Trash2,
+  
   Edit3,
 } from "lucide-react";
 
@@ -240,45 +240,7 @@ function DepartmentMaster() {
   // DELETE
   // =====================================================
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this department?"
-    );
-
-    if (!confirmDelete) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setMessage("");
-      setError("");
-
-      await axios.delete(`${API_URL}/${id}`);
-
-      setMessage("Department deleted successfully!");
-
-      // If deleted record was being edited
-      if (editingId === id) {
-        setFormData(emptyForm);
-        setEditingId(null);
-        setShowForm(false);
-      }
-
-      await fetchDepartments();
-    } catch (err) {
-      console.error("Delete department error:", err);
-
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Failed to delete department.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  
   // =====================================================
   // SEARCH
   // =====================================================
@@ -728,22 +690,7 @@ function DepartmentMaster() {
 
                         {/* DELETE */}
 
-                        <button
-                          type="button"
-                          className="delete-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(
-                              department._id
-                            );
-                          }}
-                          title="Delete"
-                        >
-
-                          <Trash2 size={16} />
-
-                        </button>
-
+                        
                       </td>
 
                     </tr>

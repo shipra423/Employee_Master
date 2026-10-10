@@ -4,7 +4,7 @@ import {
   ShieldCheck,
   Plus,
   Edit,
-  Trash2,
+  
   Save,
   RotateCcw,
   UserRound,
@@ -666,60 +666,7 @@ function UserMaster() {
   // DELETE
   // =====================================================
 
-  const handleDelete = async (user) => {
-    const confirmed =
-      window.confirm(
-        `Delete user "${user.userId}"?`
-      );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const response =
-        await fetch(
-          `${API_URL}/${user._id}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message ||
-            "Failed to delete user."
-        );
-      }
-
-      setSuccess(
-        "User deleted successfully."
-      );
-
-      await loadUsers();
-
-      await loadEmployees();
-
-    } catch (err) {
-      console.error(
-        "DELETE USER ERROR:",
-        err
-      );
-
-      setError(
-        err.message ||
-          "Failed to delete user."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ 
   // =====================================================
   // PASSWORD VISIBILITY IN TABLE
   // =====================================================
@@ -1079,15 +1026,16 @@ function UserMaster() {
 
                   </label>
 
-                  <input
-                    type="text"
-                    name="userName"
-                    value={
-                      formData.userName
-                    }
-                    readOnly
-                    placeholder="Employee name"
-                  />
+                 <input
+               
+  type="text"
+  name="userName"
+  value={formData.userName}
+  onChange={handleChange}
+  placeholder="Enter User Name"
+  autoComplete="off"
+     />
+   
 
                 </div>
 
@@ -1937,25 +1885,9 @@ function UserMaster() {
 
                             {/* DELETE */}
 
-                            <button
-                              type="button"
-                              className="user-master-delete-btn"
-                              onClick={() =>
-                                handleDelete(
-                                  user
-                                )
-                              }
-                              disabled={
-                                loading
-                              }
-                              title="Delete User"
-                            >
+                           
 
-                              <Trash2
-                                size={15}
-                              />
-
-                            </button>
+                            
 
                           </div>
 
