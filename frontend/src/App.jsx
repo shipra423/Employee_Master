@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 import Login from "./pages/Login";
@@ -35,8 +34,6 @@ import {
   BriefcaseBusiness,
   LogOut,
   ShieldCheck,
-  Menu,
-  X,
 } from "lucide-react";
 
 import "./App.css";
@@ -56,14 +53,9 @@ const USER_RIGHTS_KEY = "employeeMasterUserRights";
 
 const RIGHTS_API_URL = "http://localhost:5000/api/user-rights";
 
-const ALL_MENUS = [
-  "employee",
-  "attendance",
-  "salary",
-  "security",
-  "sev-rights",
-];
+const ALL_MENUS = ["employee", "attendance", "salary", "security", "sev-rights"];
 
+// UserRights page ka "Short Name" -> menu key
 const SHORTNAME_TO_MENU = {
   "employee master": "employee",
   employee: "employee",
@@ -114,9 +106,6 @@ function App() {
   const [rightsLoading, setRightsLoading] = useState(false);
   const [currentForm, setCurrentForm] = useState("employee");
 
-  // MOBILE SIDEBAR
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const [selectedEmployeeCode, setSelectedEmployeeCode] = useState(
     () => localStorage.getItem("selectedEmployeeCode") || ""
   );
@@ -133,9 +122,7 @@ function App() {
     }
   };
 
-  // =====================================================
-  // MENUS OPEN / CLOSE
-  // =====================================================
+  // ---------------- MENUS OPEN / CLOSE ----------------
 
   const [employeeMenuOpen, setEmployeeMenuOpen] = useState(true);
   const [masterMenuOpen, setMasterMenuOpen] = useState(false);
@@ -144,14 +131,9 @@ function App() {
 
   const isAdmin = checkAdmin(currentUser);
 
-  // CLOSE MOBILE SIDEBAR
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
-
-  // =====================================================
+  // ===================================================
   // FIRST ALLOWED PAGE
-  // =====================================================
+  // ===================================================
 
   const goToFirstAllowedForm = (rightsList) => {
     if (rightsList.includes("employee")) {
@@ -169,25 +151,22 @@ function App() {
 
   const saveRights = (rightsList) => {
     setUserRights(rightsList);
-    localStorage.setItem(
-      USER_RIGHTS_KEY,
-      JSON.stringify(rightsList)
-    );
+    localStorage.setItem(USER_RIGHTS_KEY, JSON.stringify(rightsList));
   };
 
-  // =====================================================
+  // ===================================================
   // LOAD USER RIGHTS
-  // =====================================================
+  // ===================================================
 
   const loadUserRights = async (user) => {
+    // ADMIN = ALL RIGHTS
     if (checkAdmin(user)) {
       saveRights([...ALL_MENUS]);
       return;
     }
 
-    const employeeId = String(
-      user?.empId || user?.userId || ""
-    ).trim();
+    // UserRights page "empId" se save karta hai
+    const employeeId = String(user?.empId || user?.userId || "").trim();
 
     if (!employeeId) {
       saveRights([]);
@@ -212,23 +191,19 @@ function App() {
 
       console.log("USER RIGHTS RESPONSE:", data);
 
+      // empId se kuch nahi mila to userId se try karo
       if (
         data?.exists === false &&
         user?.userId &&
         String(user.userId).trim() !== employeeId
       ) {
         const retry = await fetch(
-          `${RIGHTS_API_URL}/${encodeURIComponent(
-            String(user.userId).trim()
-          )}`
+          `${RIGHTS_API_URL}/${encodeURIComponent(String(user.userId).trim())}`
         );
 
         if (retry.ok) {
           data = await retry.json();
-          console.log(
-            "USER RIGHTS RESPONSE (userId retry):",
-            data
-          );
+          console.log("USER RIGHTS RESPONSE (userId retry):", data);
         }
       }
 
@@ -241,21 +216,17 @@ function App() {
 
         if (m === "all") {
           ALL_MENUS.forEach((item) => {
-            if (!rightsList.includes(item)) {
-              rightsList.push(item);
-            }
+            if (!rightsList.includes(item)) rightsList.push(item);
           });
         } else if (!rightsList.includes(m)) {
           rightsList.push(m);
         }
       };
 
+      // MAIN: data.rights = [{ shortName, add, mod, view, del }]
       if (Array.isArray(data?.rights)) {
         data.rights.forEach((r) => {
-          const key = String(
-            r?.shortName || ""
-          ).trim().toLowerCase();
-
+          const key = String(r?.shortName || "").trim().toLowerCase();
           const menu = SHORTNAME_TO_MENU[key];
 
           const hasAnyPermission =
@@ -270,6 +241,7 @@ function App() {
         });
       }
 
+      // FALLBACK 1: { exists: true, menuOption: "employee" }
       if (
         rightsList.length === 0 &&
         data?.exists &&
@@ -279,19 +251,15 @@ function App() {
         addMenu(data.menuOption);
       }
 
+      // FALLBACK 2: backend array
       if (Array.isArray(data)) {
-        data.forEach((item) =>
-          addMenu(item?.menuOption || item?.menu)
-        );
+        data.forEach((item) => addMenu(item?.menuOption || item?.menu));
       }
 
+      // FALLBACK 3: { menus: [...] }
       if (Array.isArray(data?.menus)) {
         data.menus.forEach((menuItem) =>
-          addMenu(
-            menuItem?.menuOption ||
-            menuItem?.value ||
-            menuItem
-          )
+          addMenu(menuItem?.menuOption || menuItem?.value || menuItem)
         );
       }
 
@@ -309,18 +277,18 @@ function App() {
     }
   };
 
-  // =====================================================
+  // ===================================================
   // CHECK MENU RIGHT
-  // =====================================================
+  // ===================================================
 
   const hasRight = (menu) => {
     if (isAdmin) return true;
     return userRights.includes(menu);
   };
 
-  // =====================================================
+  // ===================================================
   // LOGIN SUCCESS
-  // =====================================================
+  // ===================================================
 
   const handleLogin = async (user) => {
     console.log("APP LOGIN SUCCESS:", user);
@@ -328,16 +296,8 @@ function App() {
     localStorage.setItem(LOGGED_IN_KEY, "true");
 
     if (user) {
-      localStorage.setItem(
-        CURRENT_USER_KEY,
-        String(user.userId || "")
-      );
-
-      localStorage.setItem(
-        CURRENT_USER_DATA_KEY,
-        JSON.stringify(user)
-      );
-
+      localStorage.setItem(CURRENT_USER_KEY, String(user.userId || ""));
+      localStorage.setItem(CURRENT_USER_DATA_KEY, JSON.stringify(user));
       setCurrentUser(user);
     }
 
@@ -346,7 +306,6 @@ function App() {
     setMasterMenuOpen(false);
     setSecurityMenuOpen(false);
     setSalaryMenuOpen(false);
-    closeMobileMenu();
 
     await loadUserRights(user);
   };
@@ -356,13 +315,12 @@ function App() {
     if (isLoggedIn && currentUser) {
       loadUserRights(currentUser);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // =====================================================
+  // ===================================================
   // LOGOUT
-  // =====================================================
+  // ===================================================
 
   const handleLogout = () => {
     localStorage.removeItem(LOGGED_IN_KEY);
@@ -374,46 +332,34 @@ function App() {
     setCurrentUser(null);
     setUserRights([]);
     setCurrentForm("employee");
-
     setEmployeeMenuOpen(true);
     setMasterMenuOpen(false);
     setSecurityMenuOpen(false);
     setSalaryMenuOpen(false);
 
-    closeMobileMenu();
-
     console.log("USER LOGGED OUT");
   };
 
-  // =====================================================
+  // ===================================================
   // NAVIGATION
-  // =====================================================
+  // ===================================================
 
   const openMaster = (formName) => {
     setMasterMenuOpen(true);
     setCurrentForm(formName);
-    closeMobileMenu();
   };
 
   const openForm = (formName, requiredRight) => {
     if (!hasRight(requiredRight)) return;
-
     setCurrentForm(formName);
-    closeMobileMenu();
   };
 
-  // =====================================================
   // LOGIN PAGE
-  // =====================================================
-
   if (!isLoggedIn) {
     return <Login onLogin={handleLogin} />;
   }
 
-  // =====================================================
   // RIGHTS LOADING
-  // =====================================================
-
   if (!isAdmin && rightsLoading) {
     return (
       <div
@@ -433,57 +379,18 @@ function App() {
 
   const hasAnyMenu = isAdmin || userRights.length > 0;
 
-  // =====================================================
+  // ===================================================
   // MAIN APPLICATION
-  // =====================================================
+  // ===================================================
 
   return (
     <div className="app-layout">
-
-      {/* MOBILE MENU BUTTON */}
-      <button
-        type="button"
-        className="mobile-menu-btn"
-        onClick={() => setMobileMenuOpen(true)}
-        aria-label="Open menu"
-      >
-        <Menu size={24} />
-      </button>
-
-      {/* MOBILE OVERLAY */}
-      {mobileMenuOpen && (
-        <div
-          className="mobile-overlay"
-          onClick={closeMobileMenu}
-        />
-      )}
-
       {/* ================= SIDEBAR ================= */}
 
-      <aside
-        className={`sidebar ${
-          mobileMenuOpen ? "open" : ""
-        }`}
-      >
-
-        {/* MOBILE CLOSE BUTTON */}
-        <button
-          type="button"
-          className="mobile-close-btn"
-          onClick={closeMobileMenu}
-          aria-label="Close menu"
-        >
-          <X size={24} />
-        </button>
-
-        {/* LOGO */}
+      <aside className="sidebar">
         <div className="sidebar-logo">
           <div className="logo-box">
-            <img
-              src="/sai-logo.png"
-              alt="SAI Logo"
-              className="sai-logo"
-            />
+            <img src="/sai-logo.png" alt="SAI Logo" className="sai-logo" />
           </div>
 
           <div>
@@ -491,28 +398,21 @@ function App() {
           </div>
         </div>
 
-        {/* CURRENT USER */}
         {currentUser && (
           <div className="sidebar-user">
             <div className="sidebar-user-name">
-              {currentUser.userName ||
-                currentUser.userId ||
-                "User"}
+              {currentUser.userName || currentUser.userId || "User"}
             </div>
 
             <div className="sidebar-user-role">
-              {currentUser.role ||
-                currentUser.passwordLevel ||
-                "USER"}
+              {currentUser.role || currentUser.passwordLevel || "USER"}
             </div>
           </div>
         )}
 
-        {/* ================= SIDEBAR MENU ================= */}
-
         <div className="sidebar-menu">
+          {/* ---------- 1. EMPLOYEE MASTER ---------- */}
 
-          {/* 1. EMPLOYEE MASTER */}
           {hasRight("employee") && (
             <>
               <button
@@ -554,7 +454,6 @@ function App() {
 
               {employeeMenuOpen && (
                 <div className="submenu">
-
                   <button
                     type="button"
                     className={
@@ -562,9 +461,7 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      openForm("employee", "employee")
-                    }
+                    onClick={() => openForm("employee", "employee")}
                   >
                     <Users size={16} />
                     <span>Employee List</span>
@@ -577,9 +474,7 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      openForm("employeeReport", "employee")
-                    }
+                    onClick={() => openForm("employeeReport", "employee")}
                   >
                     <FileSpreadsheet size={16} />
                     <span>Employee Report</span>
@@ -592,15 +487,12 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      openForm("excelUpload", "employee")
-                    }
+                    onClick={() => openForm("excelUpload", "employee")}
                   >
                     <FileSpreadsheet size={16} />
                     <span>Excel / CSV Upload</span>
                   </button>
 
-                  {/* MASTER DATA */}
                   <button
                     type="button"
                     className={
@@ -612,11 +504,10 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      setMasterMenuOpen(!masterMenuOpen)
-                    }
+                    onClick={() => setMasterMenuOpen(!masterMenuOpen)}
                   >
                     <Building2 size={16} />
+
                     <span>Master Data</span>
 
                     {masterMenuOpen ? (
@@ -628,7 +519,6 @@ function App() {
 
                   {masterMenuOpen && (
                     <div className="submenu">
-
                       <button
                         type="button"
                         className={
@@ -636,9 +526,7 @@ function App() {
                             ? "submenu-item active-submenu"
                             : "submenu-item"
                         }
-                        onClick={() =>
-                          openMaster("unitMaster")
-                        }
+                        onClick={() => openMaster("unitMaster")}
                       >
                         <Building2 size={15} />
                         <span>Unit Master</span>
@@ -651,9 +539,7 @@ function App() {
                             ? "submenu-item active-submenu"
                             : "submenu-item"
                         }
-                        onClick={() =>
-                          openMaster("departmentMaster")
-                        }
+                        onClick={() => openMaster("departmentMaster")}
                       >
                         <Building2 size={15} />
                         <span>Department Master</span>
@@ -666,9 +552,7 @@ function App() {
                             ? "submenu-item active-submenu"
                             : "submenu-item"
                         }
-                        onClick={() =>
-                          openMaster("contractorMaster")
-                        }
+                        onClick={() => openMaster("contractorMaster")}
                       >
                         <Users size={15} />
                         <span>Contractor Master</span>
@@ -681,9 +565,7 @@ function App() {
                             ? "submenu-item active-submenu"
                             : "submenu-item"
                         }
-                        onClick={() =>
-                          openMaster("designationMaster")
-                        }
+                        onClick={() => openMaster("designationMaster")}
                       >
                         <BriefcaseBusiness size={15} />
                         <span>Designation Master</span>
@@ -696,14 +578,11 @@ function App() {
                             ? "submenu-item active-submenu"
                             : "submenu-item"
                         }
-                        onClick={() =>
-                          openMaster("shiftMaster")
-                        }
+                        onClick={() => openMaster("shiftMaster")}
                       >
                         <CalendarCheck size={15} />
                         <span>Shift Master</span>
                       </button>
-
                     </div>
                   )}
                 </div>
@@ -711,18 +590,15 @@ function App() {
             </>
           )}
 
-          {/* 2. ATTENDANCE */}
+          {/* ---------- 2. ATTENDANCE ---------- */}
+
           {hasRight("attendance") && (
             <button
               type="button"
               className={
-                currentForm === "attendance"
-                  ? "menu-item active"
-                  : "menu-item"
+                currentForm === "attendance" ? "menu-item active" : "menu-item"
               }
-              onClick={() =>
-                openForm("attendance", "attendance")
-              }
+              onClick={() => openForm("attendance", "attendance")}
             >
               <CalendarCheck size={19} />
 
@@ -733,7 +609,8 @@ function App() {
             </button>
           )}
 
-          {/* 3. PF / ESI / SALARY */}
+          {/* ---------- 3. PF / ESI / SALARY ---------- */}
+
           {hasRight("salary") && (
             <>
               <button
@@ -768,7 +645,6 @@ function App() {
 
               {salaryMenuOpen && (
                 <div className="submenu">
-
                   <button
                     type="button"
                     className={
@@ -776,9 +652,7 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      openForm("pfesi", "salary")
-                    }
+                    onClick={() => openForm("pfesi", "salary")}
                   >
                     <WalletCards size={16} />
                     <span>PF / ESI Details</span>
@@ -791,9 +665,7 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      openForm("salaryUpload", "salary")
-                    }
+                    onClick={() => openForm("salaryUpload", "salary")}
                   >
                     <FileSpreadsheet size={16} />
                     <span>Salary Upload</span>
@@ -806,27 +678,24 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      openForm("salaryStatement", "salary")
-                    }
+                    onClick={() => openForm("salaryStatement", "salary")}
                   >
                     <FileSpreadsheet size={16} />
                     <span>Salary Statement</span>
                   </button>
-
                 </div>
               )}
             </>
           )}
 
-          {/* 4. SECURITY */}
+          {/* ---------- 4. SECURITY ---------- */}
+
           {hasRight("security") && (
             <>
               <button
                 type="button"
                 className={
-                  currentForm === "userMaster" ||
-                  currentForm === "userRights"
+                  currentForm === "userMaster" || currentForm === "userRights"
                     ? "menu-item active"
                     : "menu-item"
                 }
@@ -853,7 +722,6 @@ function App() {
 
               {securityMenuOpen && (
                 <div className="submenu">
-
                   <button
                     type="button"
                     className={
@@ -861,9 +729,7 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      openForm("userMaster", "security")
-                    }
+                    onClick={() => openForm("userMaster", "security")}
                   >
                     <Users size={16} />
                     <span>User Master</span>
@@ -876,39 +742,30 @@ function App() {
                         ? "submenu-item active-submenu"
                         : "submenu-item"
                     }
-                    onClick={() =>
-                      openForm("userRights", "security")
-                    }
+                    onClick={() => openForm("userRights", "security")}
                   >
                     <ShieldCheck size={16} />
                     <span>User Rights</span>
                   </button>
-
                 </div>
               )}
             </>
           )}
-
         </div>
 
         {/* LOGOUT */}
+
         <div className="sidebar-bottom">
-          <button
-            type="button"
-            className="logout-btn"
-            onClick={handleLogout}
-          >
+          <button type="button" className="logout-btn" onClick={handleLogout}>
             <LogOut size={18} />
             <span>Logout</span>
           </button>
         </div>
-
       </aside>
 
       {/* ================= MAIN CONTENT ================= */}
 
       <main className="main-content">
-
         {!hasAnyMenu && (
           <div
             style={{
@@ -918,119 +775,79 @@ function App() {
               color: "#fff",
             }}
           >
-            No menu rights assigned to this user.
-            Please contact the administrator,
-            then logout and login again.
+            No menu rights assigned to this user. Please contact the
+            administrator, then logout and login again.
           </div>
         )}
 
-        {currentForm === "employee" &&
-          hasRight("employee") && (
-            <EmployeeMaster
-              onBankDetail={() =>
-                setCurrentForm("bankDetail")
-              }
-              onQualification={() =>
-                setCurrentForm("qualification")
-              }
-              onEmployeeSelect={handleEmployeeSelect}
-            />
-          )}
+        {currentForm === "employee" && hasRight("employee") && (
+          <EmployeeMaster
+            onBankDetail={() => setCurrentForm("bankDetail")}
+            onQualification={() => setCurrentForm("qualification")}
+            onEmployeeSelect={handleEmployeeSelect}
+          />
+        )}
 
-        {currentForm === "employeeReport" &&
-          hasRight("employee") && (
-            <EmployeeReport
-              onEmployeeInformation={() =>
-                setCurrentForm("employee")
-              }
-            />
-          )}
+        {currentForm === "employeeReport" && hasRight("employee") && (
+          <EmployeeReport
+            onEmployeeInformation={() => setCurrentForm("employee")}
+          />
+        )}
 
-        {currentForm === "bankDetail" &&
-          hasRight("employee") && (
-            <BankDetail
-              onEmployeeInformation={() =>
-                setCurrentForm("employee")
-              }
-              onQualification={() =>
-                setCurrentForm("qualification")
-              }
-            />
-          )}
+        {currentForm === "bankDetail" && hasRight("employee") && (
+          <BankDetail
+            onEmployeeInformation={() => setCurrentForm("employee")}
+            onQualification={() => setCurrentForm("qualification")}
+          />
+        )}
 
-        {currentForm === "qualification" &&
-          hasRight("employee") && (
-            <Qualification
-              selectedEmployeeCode={selectedEmployeeCode}
-              onEmployeeInformation={() =>
-                setCurrentForm("employee")
-              }
-              onBankDetail={() =>
-                setCurrentForm("bankDetail")
-              }
-            />
-          )}
+        {currentForm === "qualification" && hasRight("employee") && (
+          <Qualification
+            selectedEmployeeCode={selectedEmployeeCode}
+            onEmployeeInformation={() => setCurrentForm("employee")}
+            onBankDetail={() => setCurrentForm("bankDetail")}
+          />
+        )}
 
-        {currentForm === "excelUpload" &&
-          hasRight("employee") && (
-            <ExcelUpload />
-          )}
+        {currentForm === "excelUpload" && hasRight("employee") && (
+          <ExcelUpload />
+        )}
 
-        {currentForm === "unitMaster" &&
-          hasRight("employee") && (
-            <UnitMaster />
-          )}
+        {currentForm === "unitMaster" && hasRight("employee") && <UnitMaster />}
 
-        {currentForm === "departmentMaster" &&
-          hasRight("employee") && (
-            <DepartmentMaster />
-          )}
+        {currentForm === "departmentMaster" && hasRight("employee") && (
+          <DepartmentMaster />
+        )}
 
-        {currentForm === "contractorMaster" &&
-          hasRight("employee") && (
-            <ContractorMaster />
-          )}
+        {currentForm === "contractorMaster" && hasRight("employee") && (
+          <ContractorMaster />
+        )}
 
-        {currentForm === "designationMaster" &&
-          hasRight("employee") && (
-            <DesignationMaster />
-          )}
+        {currentForm === "designationMaster" && hasRight("employee") && (
+          <DesignationMaster />
+        )}
 
-        {currentForm === "shiftMaster" &&
-          hasRight("employee") && (
-            <ShiftMaster />
-          )}
+        {currentForm === "shiftMaster" && hasRight("employee") && (
+          <ShiftMaster />
+        )}
 
-        {currentForm === "attendance" &&
-          hasRight("attendance") && (
-            <Attendance />
-          )}
+        {currentForm === "attendance" && hasRight("attendance") && (
+          <Attendance />
+        )}
 
-        {currentForm === "pfesi" &&
-          hasRight("salary") && (
-            <PFESI />
-          )}
+        {currentForm === "pfesi" && hasRight("salary") && <PFESI />}
 
-        {currentForm === "salaryUpload" &&
-          hasRight("salary") && (
-            <SalaryUpload />
-          )}
+        {currentForm === "salaryUpload" && hasRight("salary") && (
+          <SalaryUpload />
+        )}
 
-        {currentForm === "salaryStatement" &&
-          hasRight("salary") && (
-            <SalaryStatement />
-          )}
+        {currentForm === "salaryStatement" && hasRight("salary") && (
+          <SalaryStatement />
+        )}
 
-        {currentForm === "userMaster" &&
-          hasRight("security") && (
-            <UserMaster />
-          )}
+        {currentForm === "userMaster" && hasRight("security") && <UserMaster />}
 
-        {currentForm === "userRights" &&
-          hasRight("security") && (
-            <UserRights />
-          )}
-
+        {currentForm === "userRights" && hasRight("security") && <UserRights />}
       </main>
     </div>
   );
