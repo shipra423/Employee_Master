@@ -671,3 +671,246 @@ code {
 
   font-weight: 600;
 }
+/* =========================================
+   MOBILE RESPONSIVE FIX
+   ========================================= */
+
+.mobile-menu-btn,
+.mobile-close-btn,
+.mobile-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .app-layout {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 280px;
+    min-width: 0;
+    max-width: 85vw;
+    height: 100dvh;
+
+    overflow-y: auto;
+    z-index: 1001;
+
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* MAIN CONTENT */
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    min-width: 0;
+    padding: 65px 12px 16px;
+    overflow-x: hidden;
+  }
+
+  /* MENU BUTTON */
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 999;
+
+    padding: 9px;
+    border: none;
+    border-radius: 8px;
+    background: white;
+    color: #103e7e;
+    cursor: pointer;
+  }
+
+  /* CLOSE BUTTON */
+  .mobile-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 0 12px auto;
+    padding: 8px;
+
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* OVERLAY */
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+
+  /* EMPLOYEE FORM */
+  .employee-page,
+  .form-card,
+  .employee-details-area,
+  .employee-media-area {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .employee-form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .form-group {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .form-group label {
+    display: flex;
+    flex-wrap: wrap;
+    white-space: normal;
+    line-height: 1.4;
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  /* EMPLOYEE PHOTO */
+  .employee-media-area {
+    border-left: none;
+    border-top: 1px solid #d7dce5;
+    padding-left: 0;
+    padding-top: 14px;
+  }
+
+  .employee-photo-box {
+    width: 100%;
+  }
+
+  .employee-photo-preview {
+    max-width: 100%;
+  }
+
+  .photo-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .change-photo-btn,
+  .remove-photo-btn {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  /* DOCUMENTS */
+  .documents-toggle {
+    width: 100%;
+  }
+
+  .document-drawer {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  /* TABS */
+  .employee-tabs {
+    margin-left: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .employee-tab {
+    flex-shrink: 0;
+  }
+
+  /* SEARCH */
+  .employee-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .employee-search-box,
+  .add-employee-btn {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* TABLES */
+  .table-wrapper,
+  .employee-results-table,
+  .shift-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* BUTTONS */
+  .form-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* BANK DETAILS */
+  .bank-reference-layout {
+    flex-direction: column;
+  }
+
+  .bank-reference-box,
+  .bank-left-box,
+  .bank-right-box,
+  .bank-reference-checkbox-box {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* SHIFT MASTER */
+  .shift-master-page {
+    padding: 12px;
+  }
+
+  .shift-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
